@@ -8,12 +8,11 @@ MORCA: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Vide
 
 ## Project page
 
-- `index.html`: paper overview, authors, figures, results, and citation.
-- `style.css`: responsive layout.
-- `app.js`: model/target result filters, figure viewer, and citation copy.
-- `assets/`: paper PDF, web figure exports, Table 2 data, citation, and favicon.
-- `.nojekyll`: serves the page directly through GitHub Pages.
+The layout follows the [DIET project page](https://zjc301.top/Video-DiT-MoE-Pruning-Page/): title/authors, Paper/Code links, overview, Abstract, Method, Results, Analysis, and Qualitative Results. Content and figures are from MORCA.
 
-Preview locally with `python -m http.server 8000`, then open `http://localhost:8000`.
+- `index.html`: static project page.
+- `style.css`: template-matched layout and responsive styling.
+- `assets/`: current paper PDF and web figure previews.
+- `.nojekyll`: GitHub Pages static serving.
 
-Results and figure exports come from the accompanying MORCA paper. The page uses original HTML/CSS/JavaScript; its layout is inspired by the [SeaCache project page](https://jiwoogit.github.io/SeaCache/).
+Preview with `python -m http.server 8000` and open `http://localhost:8000`.
