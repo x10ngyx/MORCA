@@ -5,3 +5,5 @@
 .method-text h3{color:#363636;font-size:1.2rem;line-height:1.5;margin:28px 0 12px;text-align:left}.results-subtitle{color:#363636;font-size:1.3rem;margin:48px 0 16px}
 
 .abstract-highlight{color:#2563b8}
+
+.prediction-table-wrap{max-width:780px;margin:28px auto 0}.prediction-table{width:100%;border-collapse:collapse;font-size:1rem;line-height:1.5}.prediction-table caption{text-align:left;color:#555;margin-bottom:14px;line-height:1.6}.prediction-table th,.prediction-table td{padding:12px 14px;border-bottom:1px solid #e0e0e0;text-align:right;font-variant-numeric:tabular-nums}.prediction-table thead th{border-top:2px solid #555;border-bottom:1px solid #888;color:#363636;white-space:nowrap}.prediction-table th:first-child{text-align:left}.prediction-table tbody th{font-weight:400}.prediction-table tbody tr:last-child>*{border-bottom:2px solid #555}@media(max-width:600px){.prediction-table{font-size:.82rem}.prediction-table th,.prediction-table td{padding:10px 6px}.prediction-table caption{font-size:.9rem}}
