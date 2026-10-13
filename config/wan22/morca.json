@@ -1,0 +1,6 @@
+{
+  "policy": "models/MORCA/wan22.pt",
+  "skip_budget": 25,
+  "speedup": null,
+  "calibration": null
+}

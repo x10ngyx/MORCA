@@ -1,0 +1,41 @@
+{
+  "schema": "teacache4wan22_coefficients_v1",
+  "protocol": {
+    "task": "t2v-A14B",
+    "size_wh": [
+      832,
+      480
+    ],
+    "frame_num": 45,
+    "sampling_steps": 50,
+    "sample_solver": "dpm++",
+    "shift": 12.0,
+    "guide_scale_low_high": [
+      3.0,
+      4.0
+    ],
+    "boundary": 0.875,
+    "param_dtype": "torch.bfloat16",
+    "use_ret_steps": false
+  },
+  "stages": {
+    "high": {
+      "coefficients_descending": [
+        -9625.24415962019,
+        5730.235365427756,
+        -1194.319680479939,
+        102.68904990804647,
+        -2.7838895296631514
+      ]
+    },
+    "low": {
+      "coefficients_descending": [
+        65831.09320514974,
+        -47482.25159407807,
+        12746.33243281326,
+        -1507.831401485216,
+        66.39891548598933
+      ]
+    }
+  }
+}

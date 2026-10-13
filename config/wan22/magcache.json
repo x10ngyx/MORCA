@@ -1,0 +1,5 @@
+{
+  "threshold": 0.2,
+  "retention": 0.2,
+  "max_skip": 4
+}

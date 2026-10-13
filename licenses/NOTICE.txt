@@ -1,0 +1,19 @@
+MORCA includes adaptations of the following projects.
+
+Wan2.1 and Wan2.2: Copyright 2024-2025 The Alibaba Wan Team Authors.
+https://github.com/Wan-Video/Wan2.1
+https://github.com/Wan-Video/Wan2.2
+Apache License 2.0 (see Apache-2.0.txt).
+
+TeaCache: https://github.com/ali-vilab/TeaCache (Apache-2.0).
+SeaCache: https://github.com/jiwoogit/SeaCache; independently implemented controller.
+MagCache: https://github.com/Zehong-Ma/MagCache (Apache-2.0).
+DiCache: https://github.com/Bujiazi/DiCache at fdbe20b669c9174bbed5ec994de073fd881c8010.
+The source snapshot declares no license; no redistribution permission is claimed here.
+
+VideoMetrics uses the existing official-code RGB PSNR/SSIM/LPIPS implementation;
+LPIPS: https://github.com/richzhang/PerceptualSimilarity (BSD-2-Clause).
+VBench prompts: https://github.com/Vchitect/VBench (Apache-2.0).
+
+Changes: extracted T2V samplers, cache controllers and CNN+G1/IQL equations;
+removed experiment orchestration and added shared command-line interfaces.

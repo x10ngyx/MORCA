@@ -1,0 +1,24 @@
+{
+  "pipeline": {
+    "dit_dtype": "bfloat16",
+    "t5_cpu": false,
+    "boundary": 0.875
+  },
+  "generation": {
+    "size": [
+      832,
+      480
+    ],
+    "frame_num": 45,
+    "shift": 12.0,
+    "sample_solver": "dpm++",
+    "sampling_steps": 50,
+    "guide_scale": [
+      3.0,
+      4.0
+    ],
+    "seed": 42,
+    "offload_model": true
+  },
+  "fps": 16
+}
