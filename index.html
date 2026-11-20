@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111f23">
+  <meta name="theme-color" content="#141e2d">
   <title>MORCA: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</title>
   <meta name="description" content="MORCA learns when to reuse cached computation in video diffusion. Explore the method, benchmarks, and matched video comparisons on Wan2.2, Wan2.1, and CogVideoX.">
   <link rel="canonical" href="https://x10ngyx.github.io/MORCA/">
@@ -11,21 +11,14 @@
   <meta property="og:title" content="MORCA · Adaptive Cache Reuse in Video Diffusion">
   <meta property="og:description" content="A latent-aware scheduler for video diffusion, with results and playable comparisons across three models.">
   <meta property="og:image" content="https://x10ngyx.github.io/MORCA/assets/cover.webp">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23111f23'/%3E%3Cpath d='M9 34V14l15 15 15-15v20' stroke='%23e0b980' stroke-width='5' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23141e2d'/%3E%3Cpath d='M9 34V14l15 15 15-15v20' stroke='%239ed9d4' stroke-width='5' fill='none'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=20261120-film">
-  <script defer src="videos.js?v=20261120-film"></script>
+  <link rel="stylesheet" href="style.css?v=20261120-editorial">
+  <script defer src="videos.js?v=20261120-editorial"></script>
 </head>
 <body>
   <a class="skip-link" href="#project-video">Skip to the project video</a>
   <header class="cover" id="top">
-    <div class="cover-art" aria-hidden="true">
-      <picture>
-        <source media="(max-width: 640px)" srcset="assets/cover-mobile.webp">
-        <img src="assets/cover.webp" width="1566" height="862" fetchpriority="high" alt="">
-      </picture>
-      <video id="cover-video" muted playsinline loop preload="none" data-src="assets/cover.mp4" data-mobile-src="assets/cover-mobile.mp4" tabindex="-1"></video>
-    </div>
     <div class="shell masthead">
       <a class="wordmark" href="#top" aria-label="MORCA home"><span class="mark" aria-hidden="true"></span>MORCA</a>
       <nav aria-label="Project navigation">
@@ -34,14 +27,21 @@
         <a href="#results">Results</a>
       </nav>
     </div>
-    <div class="cover-center shell">
-      <p class="models-line">Wan2.2 <span>/</span> Wan2.1 <span>/</span> CogVideoX</p>
-      <h1>MOR<span>CA</span><span class="sr-only">: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</span></h1>
-      <p class="paper-title" aria-hidden="true">Offline-to-Online Reinforcement Learning<br class="wide-break"> for Adaptive Cache Reuse in Video Diffusion Acceleration</p>
-      <div class="resources">
-        <a class="button primary" href="#project-video" id="watch-film"><span class="play-glyph" aria-hidden="true"></span>Watch project video</a>
-        <a class="button secondary" href="https://arxiv.org/abs/2610.10457">arXiv preprint</a>
-        <a class="button secondary" href="https://github.com/x10ngyx/MORCA">Code</a>
+    <div class="cover-main shell">
+      <div class="cover-copy">
+        <h1>MOR<span>CA</span><span class="sr-only">: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</span></h1>
+        <p class="paper-title" aria-hidden="true">Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</p>
+        <div class="resources">
+          <a class="button primary" href="https://arxiv.org/abs/2610.10457">arXiv preprint</a>
+          <a class="button secondary" href="https://github.com/x10ngyx/MORCA">Code</a>
+        </div>
+      </div>
+      <div class="cover-art" aria-hidden="true">
+        <picture>
+          <source media="(max-width: 640px)" srcset="assets/clips/cow-and-elephant/morca.webp">
+          <img src="assets/cover.webp" width="1566" height="862" fetchpriority="high" alt="">
+        </picture>
+        <video id="cover-video" muted playsinline loop preload="none" data-src="assets/cover.mp4" data-mobile-src="assets/clips/cow-and-elephant/morca.mp4" tabindex="-1"></video>
       </div>
     </div>
     <div class="shell credits">
@@ -56,7 +56,6 @@
       </div>
       <p class="roles"><span>* Equal contribution</span><span>‡ Project leader</span><span>† Corresponding author</span></p>
     </div>
-    <button id="cover-toggle" class="cover-toggle" type="button" hidden aria-label="Pause cover video" title="Pause cover video"><span class="pause-glyph" aria-hidden="true"></span></button>
   </header>
 
   <main>
@@ -64,41 +63,38 @@
       <div class="shell">
         <div class="section-heading">
           <h2 id="film-title">Project <em>video.</em></h2>
-          <div class="film-links">
-            <span>52 seconds · English captions</span>
-            <a href="assets/morca-project-video.mp4" download="MORCA-project-video.mp4">Download MP4</a>
+        </div>
+        <div class="film-player">
+          <video id="project-film" aria-labelledby="film-title" aria-describedby="film-instructions" tabindex="0"
+                 muted loop playsinline preload="none" width="1920" height="1080" poster="assets/morca-project-video.webp">
+            <source src="assets/morca-project-video.mp4" type="video/mp4">
+            <track kind="captions" src="assets/morca-project-video.en.vtt" srclang="en" label="English" default>
+          </video>
+          <p class="sr-only" id="film-instructions">Tap the video or press Space to pause or resume.</p>
+          <div class="film-tools" hidden>
+            <input id="film-position" type="range" min="0" max="100" step="0.1" value="0" aria-label="Video position">
+            <button type="button" id="film-sound" aria-label="Narration audio" aria-pressed="false">Sound off</button>
+            <button type="button" id="film-captions" aria-label="Captions" aria-pressed="true">CC</button>
+            <button type="button" id="film-fullscreen" hidden>Full screen</button>
           </div>
         </div>
-        <video id="project-film" aria-labelledby="film-title" controls playsinline preload="none"
-               width="1920" height="1080" poster="assets/morca-project-video.webp">
-          <source src="assets/morca-project-video.mp4" type="video/mp4">
-          <track kind="captions" src="assets/morca-project-video.en.vtt" srclang="en" label="English">
-          <a href="assets/morca-project-video.mp4">Download the project video</a>
-        </video>
+        <noscript>
+          <style>.film-player { display: none; }</style>
+          <video class="static-film" muted autoplay loop playsinline width="1920" height="1080" poster="assets/morca-project-video.webp">
+            <source src="assets/morca-project-video.mp4" type="video/mp4">
+            <track kind="captions" src="assets/morca-project-video.en.vtt" srclang="en" label="English" default>
+          </video>
+        </noscript>
       </div>
     </section>
     <section id="videos" class="section dark">
       <div class="shell">
         <div class="section-heading">
           <h2>Video <em>comparisons.</em></h2>
-          <p>Explore 24 examples. Each group shows the same prompt across methods, alongside the original uncached video.</p>
         </div>
-        <details class="annotated">
-          <summary>Annotated frames from the paper</summary>
-          <figure class="paper-figure">
-            <a class="figure-link" href="assets/qualitative.webp?v=20261120" aria-label="Open full-size figure. Frame comparisons at the 2.4× target on Wan2.2, Wan2.1, and CogVideoX. Colored boxes mark the regions compared.">
-              <img src="assets/qualitative.webp?v=20261120" width="3200" height="1088" loading="lazy" decoding="async" alt="Frame comparisons at the 2.4× target on Wan2.2, Wan2.1, and CogVideoX. Colored boxes mark the regions compared.">
-            </a>
-            <figcaption>The cow and elephant and the cup illustrate changes in composition. The dog-grooming example shows differences in fine detail.</figcaption>
-          </figure>
-        </details>
         <div class="gallery-tools" id="gallery-tools" hidden>
           <label class="field"><span>Model</span><span class="select-wrap"><select id="model-select"><option>Wan2.2</option><option>Wan2.1</option><option>CogVideoX</option></select></span></label>
           <label class="field"><span>Example</span><span class="select-wrap"><select id="example-select"></select></span></label>
-          <div class="play-tools">
-            <button type="button" class="button primary" id="group-play"><span class="play-glyph" aria-hidden="true"></span><span class="action-text">Play together</span></button>
-            <button type="button" class="button secondary" id="group-replay">Replay</button>
-          </div>
         </div>
         <div class="case-heading">
           <div>
@@ -107,34 +103,41 @@
           </div>
           <p id="play-status" class="status" role="status"></p>
         </div>
-        <div class="clip-grid" id="clip-grid" aria-labelledby="case-prompt">
+        <p class="sr-only" id="comparison-instructions">Tap a clip or press Space to pause or resume the group.</p>
+        <div class="clip-grid" id="clip-grid" role="group" tabindex="0" aria-labelledby="case-prompt" aria-describedby="comparison-instructions">
           <figure class="clip">
-            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/original.mp4" poster="assets/clips/cow-and-elephant/original.webp" aria-label="Original, Cow and elephant"></video>
+            <video muted loop playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/original.mp4" poster="assets/clips/cow-and-elephant/original.webp" aria-label="Original, Cow and elephant"></video>
             <figcaption>Original<small>No cache</small></figcaption>
           </figure>
           <figure class="clip ours">
-            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/morca.mp4" poster="assets/clips/cow-and-elephant/morca.webp" aria-label="MORCA, Cow and elephant"></video>
+            <video muted loop playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/morca.mp4" poster="assets/clips/cow-and-elephant/morca.webp" aria-label="MORCA, Cow and elephant"></video>
             <figcaption>MORCA</figcaption>
           </figure>
           <figure class="clip">
-            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/seacache.mp4" poster="assets/clips/cow-and-elephant/seacache.webp" aria-label="SeaCache, Cow and elephant"></video>
+            <video muted loop playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/seacache.mp4" poster="assets/clips/cow-and-elephant/seacache.webp" aria-label="SeaCache, Cow and elephant"></video>
             <figcaption>SeaCache</figcaption>
           </figure>
           <figure class="clip">
-            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/teacache.mp4" poster="assets/clips/cow-and-elephant/teacache.webp" aria-label="TeaCache, Cow and elephant"></video>
+            <video muted loop playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/teacache.mp4" poster="assets/clips/cow-and-elephant/teacache.webp" aria-label="TeaCache, Cow and elephant"></video>
             <figcaption>TeaCache</figcaption>
           </figure>
           <figure class="clip">
-            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/magcache.mp4" poster="assets/clips/cow-and-elephant/magcache.webp" aria-label="MagCache, Cow and elephant"></video>
+            <video muted loop playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/magcache.mp4" poster="assets/clips/cow-and-elephant/magcache.webp" aria-label="MagCache, Cow and elephant"></video>
             <figcaption>MagCache</figcaption>
           </figure>
           <figure class="clip">
-            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/dicache.mp4" poster="assets/clips/cow-and-elephant/dicache.webp" aria-label="DiCache, Cow and elephant"></video>
+            <video muted loop playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/dicache.mp4" poster="assets/clips/cow-and-elephant/dicache.webp" aria-label="DiCache, Cow and elephant"></video>
             <figcaption>DiCache</figcaption>
           </figure>
         </div>
+        <figure class="paper-figure comparison-figure">
+            <a class="figure-link" href="assets/qualitative.webp?v=20261120" aria-label="Open full-size figure. Frame comparisons at the 2.4× target on Wan2.2, Wan2.1, and CogVideoX. Colored boxes mark the regions compared.">
+              <img src="assets/qualitative.webp?v=20261120" width="3200" height="1088" loading="lazy" decoding="async" alt="Frame comparisons at the 2.4× target on Wan2.2, Wan2.1, and CogVideoX. Colored boxes mark the regions compared.">
+            </a>
+            <figcaption>The cow and elephant and the cup illustrate changes in composition. The dog-grooming example shows differences in fine detail.</figcaption>
+          </figure>
         <noscript>
-          <details class="annotated"><summary>Browse all comparison videos</summary>
+          <div><h3>All comparison videos</h3>
             <ul class="file-list">
               <li><strong>Wan2.2 · Cow and elephant · 2.4×</strong>
 <a href="assets/clips/cow-and-elephant/original.mp4">Original</a> <a href="assets/clips/cow-and-elephant/morca.mp4">MORCA</a> <a href="assets/clips/cow-and-elephant/seacache.mp4">SeaCache</a> <a href="assets/clips/cow-and-elephant/teacache.mp4">TeaCache</a> <a href="assets/clips/cow-and-elephant/magcache.mp4">MagCache</a> <a href="assets/clips/cow-and-elephant/dicache.mp4">DiCache</a>               </li>
@@ -185,7 +188,7 @@
               <li><strong>CogVideoX · Bathroom fixtures · 3.0×</strong>
 <a href="assets/clips/bathroom/original.mp4">Original</a> <a href="assets/clips/bathroom/morca.mp4">MORCA</a> <a href="assets/clips/bathroom/seacache.mp4">SeaCache</a> <a href="assets/clips/bathroom/teacache.mp4">TeaCache</a> <a href="assets/clips/bathroom/magcache.mp4">MagCache</a> <a href="assets/clips/bathroom/dicache.mp4">DiCache</a>               </li>
             </ul>
-          </details>
+          </div>
         </noscript>
       </div>
     </section>
@@ -252,160 +255,112 @@
       <div class="shell">
         <div class="section-heading">
           <h2>Benchmark <em>results.</em></h2>
-          <p>The paper compares five caching methods at a common 2.4× target using 50 denoising steps and 200 prompts from VBench.</p>
+          <p>All three models use 50 denoising steps and 200 prompts. Speedup is relative to uncached runtime. Fidelity is measured against the uncached video.</p>
         </div>
-        <div class="gains">
-          <div><strong>+1.86 <small>dB</small></strong><span>Wan2.2</span></div>
-          <div><strong>+1.05 <small>dB</small></strong><span>Wan2.1</span></div>
-          <div><strong>+2.82 <small>dB</small></strong><span>CogVideoX</span></div>
-        </div>
-        <p class="gains-note">PSNR gain over SeaCache at the 2.4× target.</p>
-        <div class="table-intro">
-          <h3>Fidelity at matched speedups</h3>
-          <p>PSNR and SSIM increase with fidelity to the uncached output. Lower LPIPS is better. Speedup is measured against each model’s original latency.</p>
-        </div>
-        <div class="table-scroll" role="region" aria-label="Main results at the 2.4× target" tabindex="0">
-          <table class="result-table">
-            <caption class="sr-only">Quantitative comparison at approximately 2.4× speedup</caption>
-            <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
-            <tbody>
-              <tr class="group-row"><th scope="rowgroup" colspan="6">Wan2.2 <span>Wan2.2-T2V-A14B</span></th></tr>
-<tr><th scope="row">Original</th><td>990.56</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><th scope="row">TeaCache</th><td>415.21</td><td>2.39×</td><td>15.31</td><td>0.5325</td><td>0.3658</td></tr>
-<tr><th scope="row">MagCache</th><td>417.22</td><td>2.37×</td><td>15.31</td><td>0.5185</td><td>0.3632</td></tr>
-<tr><th scope="row">DiCache</th><td>416.43</td><td>2.38×</td><td>16.51</td><td>0.5759</td><td>0.2923</td></tr>
-<tr><th scope="row">SeaCache</th><td>419.76</td><td>2.36×</td><td><u>17.38</u></td><td><u>0.6074</u></td><td><u>0.2840</u></td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>421.15</td><td>2.35×</td><td><strong>19.24</strong></td><td><strong>0.6516</strong></td><td><strong>0.2513</strong></td></tr>
+        <div class="benchmark-grid">
+          <table class="benchmark-table">
+            <caption>Wan2.2 <small>Wan2.2-T2V-A14B</small></caption>
+            <thead><tr><th scope="col">Method</th><th scope="col">Latency<br>(s) ↓</th><th scope="col">Speedup<br>↑</th><th scope="col">PSNR<br>(dB) ↑</th><th scope="col">SSIM<br>↑</th><th scope="col">LPIPS<br>↓</th></tr></thead>
+            <tbody class="baseline">
+              <tr><th scope="row">Original</th><td>990.56</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
             </tbody>
             <tbody>
-              <tr class="group-row"><th scope="rowgroup" colspan="6">Wan2.1 <span>Wan2.1-T2V-1.3B</span></th></tr>
-<tr><th scope="row">Original</th><td>255.94</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><th scope="row">TeaCache</th><td>106.82</td><td>2.40×</td><td>20.12</td><td>0.7361</td><td>0.1596</td></tr>
-<tr><th scope="row">MagCache</th><td>107.54</td><td>2.38×</td><td>22.31</td><td>0.8075</td><td>0.1198</td></tr>
-<tr><th scope="row">DiCache</th><td>108.27</td><td>2.36×</td><td>22.28</td><td>0.8139</td><td><strong>0.0992</strong></td></tr>
-<tr><th scope="row">SeaCache</th><td>109.00</td><td>2.35×</td><td><u>22.86</u></td><td><u>0.8174</u></td><td>0.1131</td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>109.68</td><td>2.33×</td><td><strong>23.91</strong></td><td><strong>0.8279</strong></td><td><u>0.1073</u></td></tr>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">1.8× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>562.63</td><td>1.76×</td><td>17.04</td><td>0.5984</td><td>0.2882</td></tr>
+              <tr><th scope="row">MagCache</th><td>544.78</td><td>1.82×</td><td>16.41</td><td>0.5662</td><td>0.3041</td></tr>
+              <tr><th scope="row">DiCache</th><td>551.29</td><td>1.80×</td><td>18.51</td><td>0.6516</td><td>0.2232</td></tr>
+              <tr><th scope="row">SeaCache</th><td>546.99</td><td>1.81×</td><td><u>19.91</u></td><td><u>0.7016</u></td><td><u>0.1888</u></td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>549.19</td><td>1.80×</td><td><strong>22.13</strong></td><td><strong>0.7507</strong></td><td><strong>0.1681</strong></td></tr>
             </tbody>
             <tbody>
-              <tr class="group-row"><th scope="rowgroup" colspan="6">CogVideoX <span>CogVideoX-2B</span></th></tr>
-<tr><th scope="row">Original</th><td>92.26</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><th scope="row">TeaCache</th><td>39.31</td><td>2.35×</td><td>24.38</td><td>0.8366</td><td>0.1457</td></tr>
-<tr><th scope="row">MagCache</th><td>39.30</td><td>2.35×</td><td>26.67</td><td><u>0.8822</u></td><td>0.1073</td></tr>
-<tr><th scope="row">DiCache</th><td>38.16</td><td>2.42×</td><td>25.09</td><td>0.8636</td><td>0.1239</td></tr>
-<tr><th scope="row">SeaCache</th><td>38.43</td><td>2.40×</td><td><u>26.82</u></td><td>0.8808</td><td><u>0.1058</u></td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>38.56</td><td>2.39×</td><td><strong>29.64</strong></td><td><strong>0.9137</strong></td><td><strong>0.0744</strong></td></tr>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">2.4× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>415.21</td><td>2.39×</td><td>15.31</td><td>0.5325</td><td>0.3658</td></tr>
+              <tr><th scope="row">MagCache</th><td>417.22</td><td>2.37×</td><td>15.31</td><td>0.5185</td><td>0.3632</td></tr>
+              <tr><th scope="row">DiCache</th><td>416.43</td><td>2.38×</td><td>16.51</td><td>0.5759</td><td>0.2923</td></tr>
+              <tr><th scope="row">SeaCache</th><td>419.76</td><td>2.36×</td><td><u>17.38</u></td><td><u>0.6074</u></td><td><u>0.2840</u></td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>421.15</td><td>2.35×</td><td><strong>19.24</strong></td><td><strong>0.6516</strong></td><td><strong>0.2513</strong></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">3.0× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>322.88</td><td>3.07×</td><td>14.40</td><td>0.4913</td><td>0.4211</td></tr>
+              <tr><th scope="row">MagCache</th><td>332.74</td><td>2.98×</td><td>13.41</td><td>0.4336</td><td>0.4839</td></tr>
+              <tr><th scope="row">DiCache</th><td>340.50</td><td>2.91×</td><td><u>15.54</u></td><td><u>0.5259</u></td><td><u>0.3623</u></td></tr>
+              <tr><th scope="row">SeaCache</th><td>320.41</td><td>3.09×</td><td>14.99</td><td>0.5151</td><td>0.3941</td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>326.93</td><td>3.03×</td><td><strong>16.77</strong></td><td><strong>0.5639</strong></td><td><strong>0.3435</strong></td></tr>
+            </tbody>
+          </table>
+          <table class="benchmark-table">
+            <caption>Wan2.1 <small>Wan2.1-T2V-1.3B</small></caption>
+            <thead><tr><th scope="col">Method</th><th scope="col">Latency<br>(s) ↓</th><th scope="col">Speedup<br>↑</th><th scope="col">PSNR<br>(dB) ↑</th><th scope="col">SSIM<br>↑</th><th scope="col">LPIPS<br>↓</th></tr></thead>
+            <tbody class="baseline">
+              <tr><th scope="row">Original</th><td>255.94</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">2.4× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>106.82</td><td>2.40×</td><td>20.12</td><td>0.7361</td><td>0.1596</td></tr>
+              <tr><th scope="row">MagCache</th><td>107.54</td><td>2.38×</td><td>22.31</td><td>0.8075</td><td>0.1198</td></tr>
+              <tr><th scope="row">DiCache</th><td>108.27</td><td>2.36×</td><td>22.28</td><td>0.8139</td><td><strong>0.0992</strong></td></tr>
+              <tr><th scope="row">SeaCache</th><td>109.00</td><td>2.35×</td><td><u>22.86</u></td><td><u>0.8174</u></td><td>0.1131</td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>109.68</td><td>2.33×</td><td><strong>23.91</strong></td><td><strong>0.8279</strong></td><td><u>0.1073</u></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">3.0× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>87.71</td><td>2.92×</td><td>17.39</td><td>0.6199</td><td>0.2674</td></tr>
+              <tr><th scope="row">MagCache</th><td>86.09</td><td>2.97×</td><td><u>20.04</u></td><td>0.6888</td><td>0.1910</td></tr>
+              <tr><th scope="row">DiCache</th><td>86.82</td><td>2.95×</td><td>19.69</td><td><u>0.7170</u></td><td><u>0.1813</u></td></tr>
+              <tr><th scope="row">SeaCache</th><td>84.66</td><td>3.02×</td><td>18.78</td><td>0.6710</td><td>0.2226</td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>84.98</td><td>3.01×</td><td><strong>20.95</strong></td><td><strong>0.7244</strong></td><td><strong>0.1745</strong></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">4.0× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>64.16</td><td>3.99×</td><td>14.09</td><td>0.4625</td><td>0.4554</td></tr>
+              <tr><th scope="row">MagCache</th><td>64.09</td><td>3.99×</td><td>17.03</td><td>0.4974</td><td>0.3917</td></tr>
+              <tr><th scope="row">DiCache</th><td>64.24</td><td>3.98×</td><td>14.68</td><td>0.4611</td><td>0.4198</td></tr>
+              <tr><th scope="row">SeaCache</th><td>64.91</td><td>3.94×</td><td><u>17.13</u></td><td><u>0.5840</u></td><td><u>0.3025</u></td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>65.49</td><td>3.91×</td><td><strong>18.24</strong></td><td><strong>0.5891</strong></td><td><strong>0.2898</strong></td></tr>
+            </tbody>
+          </table>
+          <table class="benchmark-table">
+            <caption>CogVideoX <small>CogVideoX-2B</small></caption>
+            <thead><tr><th scope="col">Method</th><th scope="col">Latency<br>(s) ↓</th><th scope="col">Speedup<br>↑</th><th scope="col">PSNR<br>(dB) ↑</th><th scope="col">SSIM<br>↑</th><th scope="col">LPIPS<br>↓</th></tr></thead>
+            <tbody class="baseline">
+              <tr><th scope="row">Original</th><td>92.26</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">1.8× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>51.23</td><td>1.80×</td><td>30.12</td><td>0.9251</td><td>0.0638</td></tr>
+              <tr><th scope="row">MagCache</th><td>51.22</td><td>1.80×</td><td>28.97</td><td>0.9138</td><td>0.0750</td></tr>
+              <tr><th scope="row">DiCache</th><td>50.59</td><td>1.82×</td><td>28.23</td><td>0.9092</td><td>0.0781</td></tr>
+              <tr><th scope="row">SeaCache</th><td>50.48</td><td>1.83×</td><td><u>35.49</u></td><td><u>0.9636</u></td><td><u>0.0271</u></td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>50.89</td><td>1.81×</td><td><strong>36.78</strong></td><td><strong>0.9690</strong></td><td><strong>0.0203</strong></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">2.4× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>39.31</td><td>2.35×</td><td>24.38</td><td>0.8366</td><td>0.1457</td></tr>
+              <tr><th scope="row">MagCache</th><td>39.30</td><td>2.35×</td><td>26.67</td><td><u>0.8822</u></td><td>0.1073</td></tr>
+              <tr><th scope="row">DiCache</th><td>38.16</td><td>2.42×</td><td>25.09</td><td>0.8636</td><td>0.1239</td></tr>
+              <tr><th scope="row">SeaCache</th><td>38.43</td><td>2.40×</td><td><u>26.82</u></td><td>0.8808</td><td><u>0.1058</u></td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>38.56</td><td>2.39×</td><td><strong>29.64</strong></td><td><strong>0.9137</strong></td><td><strong>0.0744</strong></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="target-row"><th scope="rowgroup" colspan="6">3.0× target</th></tr>
+              <tr><th scope="row">TeaCache</th><td>30.87</td><td>2.99×</td><td>21.43</td><td>0.7741</td><td>0.2202</td></tr>
+              <tr><th scope="row">MagCache</th><td>30.87</td><td>2.99×</td><td><strong>24.76</strong></td><td><strong>0.8431</strong></td><td><strong>0.1508</strong></td></tr>
+              <tr><th scope="row">DiCache</th><td>30.29</td><td>3.05×</td><td>22.26</td><td>0.7965</td><td>0.1995</td></tr>
+              <tr><th scope="row">SeaCache</th><td>31.00</td><td>2.98×</td><td>23.26</td><td>0.8135</td><td><u>0.1742</u></td></tr>
+              <tr class="method-row"><th scope="row">MORCA</th><td>31.00</td><td>2.98×</td><td><u>23.95</u></td><td><u>0.8159</u></td><td>0.1847</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="table-key"><strong>Bold</strong> marks the best fidelity score. <u>Underlining</u> marks the runner-up. At 2.4×, DiCache has the lowest LPIPS on Wan2.1.</p>
-        <div class="details-list">
-          <details>
-            <summary>Results at other target speedups</summary>
-            <p>Wan2.2 and CogVideoX cover 1.8× to 3.0×. Wan2.1 covers 2.4× to 4.0×. At the 3.0× target on CogVideoX, MagCache leads all three fidelity metrics.</p>
-            <div class="table-scroll" role="region" aria-label="Additional Wan2.2 results" tabindex="0">
-              <table class="result-table">
-                <caption>Wan2.2</caption>
-                <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
-                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">1.8× target</th></tr>
-<tr><th scope="row">TeaCache</th><td>562.63</td><td>1.76×</td><td>17.04</td><td>0.5984</td><td>0.2882</td></tr>
-<tr><th scope="row">MagCache</th><td>544.78</td><td>1.82×</td><td>16.41</td><td>0.5662</td><td>0.3041</td></tr>
-<tr><th scope="row">DiCache</th><td>551.29</td><td>1.80×</td><td>18.51</td><td>0.6516</td><td>0.2232</td></tr>
-<tr><th scope="row">SeaCache</th><td>546.99</td><td>1.81×</td><td><u>19.91</u></td><td><u>0.7016</u></td><td><u>0.1888</u></td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>549.19</td><td>1.80×</td><td><strong>22.13</strong></td><td><strong>0.7507</strong></td><td><strong>0.1681</strong></td></tr>
-                </tbody>
-                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">3.0× target</th></tr>
-<tr><th scope="row">TeaCache</th><td>322.88</td><td>3.07×</td><td>14.40</td><td>0.4913</td><td>0.4211</td></tr>
-<tr><th scope="row">MagCache</th><td>332.74</td><td>2.98×</td><td>13.41</td><td>0.4336</td><td>0.4839</td></tr>
-<tr><th scope="row">DiCache</th><td>340.50</td><td>2.91×</td><td><u>15.54</u></td><td><u>0.5259</u></td><td><u>0.3623</u></td></tr>
-<tr><th scope="row">SeaCache</th><td>320.41</td><td>3.09×</td><td>14.99</td><td>0.5151</td><td>0.3941</td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>326.93</td><td>3.03×</td><td><strong>16.77</strong></td><td><strong>0.5639</strong></td><td><strong>0.3435</strong></td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="table-scroll" role="region" aria-label="Additional Wan2.1 results" tabindex="0">
-              <table class="result-table">
-                <caption>Wan2.1</caption>
-                <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
-                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">3.0× target</th></tr>
-<tr><th scope="row">TeaCache</th><td>87.71</td><td>2.92×</td><td>17.39</td><td>0.6199</td><td>0.2674</td></tr>
-<tr><th scope="row">MagCache</th><td>86.09</td><td>2.97×</td><td><u>20.04</u></td><td>0.6888</td><td>0.1910</td></tr>
-<tr><th scope="row">DiCache</th><td>86.82</td><td>2.95×</td><td>19.69</td><td><u>0.7170</u></td><td><u>0.1813</u></td></tr>
-<tr><th scope="row">SeaCache</th><td>84.66</td><td>3.02×</td><td>18.78</td><td>0.6710</td><td>0.2226</td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>84.98</td><td>3.01×</td><td><strong>20.95</strong></td><td><strong>0.7244</strong></td><td><strong>0.1745</strong></td></tr>
-                </tbody>
-                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">4.0× target</th></tr>
-<tr><th scope="row">TeaCache</th><td>64.16</td><td>3.99×</td><td>14.09</td><td>0.4625</td><td>0.4554</td></tr>
-<tr><th scope="row">MagCache</th><td>64.09</td><td>3.99×</td><td>17.03</td><td>0.4974</td><td>0.3917</td></tr>
-<tr><th scope="row">DiCache</th><td>64.24</td><td>3.98×</td><td>14.68</td><td>0.4611</td><td>0.4198</td></tr>
-<tr><th scope="row">SeaCache</th><td>64.91</td><td>3.94×</td><td><u>17.13</u></td><td><u>0.5840</u></td><td><u>0.3025</u></td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>65.49</td><td>3.91×</td><td><strong>18.24</strong></td><td><strong>0.5891</strong></td><td><strong>0.2898</strong></td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="table-scroll" role="region" aria-label="Additional CogVideoX results" tabindex="0">
-              <table class="result-table">
-                <caption>CogVideoX</caption>
-                <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
-                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">1.8× target</th></tr>
-<tr><th scope="row">TeaCache</th><td>51.23</td><td>1.80×</td><td>30.12</td><td>0.9251</td><td>0.0638</td></tr>
-<tr><th scope="row">MagCache</th><td>51.22</td><td>1.80×</td><td>28.97</td><td>0.9138</td><td>0.0750</td></tr>
-<tr><th scope="row">DiCache</th><td>50.59</td><td>1.82×</td><td>28.23</td><td>0.9092</td><td>0.0781</td></tr>
-<tr><th scope="row">SeaCache</th><td>50.48</td><td>1.83×</td><td><u>35.49</u></td><td><u>0.9636</u></td><td><u>0.0271</u></td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>50.89</td><td>1.81×</td><td><strong>36.78</strong></td><td><strong>0.9690</strong></td><td><strong>0.0203</strong></td></tr>
-                </tbody>
-                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">3.0× target</th></tr>
-<tr><th scope="row">TeaCache</th><td>30.87</td><td>2.99×</td><td>21.43</td><td>0.7741</td><td>0.2202</td></tr>
-<tr><th scope="row">MagCache</th><td>30.87</td><td>2.99×</td><td><strong>24.76</strong></td><td><strong>0.8431</strong></td><td><strong>0.1508</strong></td></tr>
-<tr><th scope="row">DiCache</th><td>30.29</td><td>3.05×</td><td>22.26</td><td>0.7965</td><td>0.1995</td></tr>
-<tr><th scope="row">SeaCache</th><td>31.00</td><td>2.98×</td><td>23.26</td><td>0.8135</td><td><u>0.1742</u></td></tr>
-<tr class="method-row"><th scope="row">MORCA</th><td>31.00</td><td>2.98×</td><td><u>23.95</u></td><td><u>0.8159</u></td><td>0.1847</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="split figure-note">
-              <figure class="paper-figure">
+        <p class="table-key"><strong>Bold</strong> marks the best fidelity score at each target. <u>Underlining</u> marks the runner-up.</p>
+        <div class="split figure-note">
+          <figure class="paper-figure">
             <a class="figure-link" href="assets/tradeoffs.webp?v=20261120" aria-label="Open full-size figure. PSNR, SSIM, and LPIPS versus measured speedup for MORCA and SeaCache on Wan2.2.">
               <img src="assets/tradeoffs.webp?v=20261120" width="1000" height="1305" loading="lazy" decoding="async" alt="PSNR, SSIM, and LPIPS versus measured speedup for MORCA and SeaCache on Wan2.2.">
             </a>
             <figcaption>Wan2.2 speed–fidelity curves on a 50-prompt subset, across nine targets from 1.5× to 3.5×.</figcaption>
           </figure>
-              <div class="prose"><h3>Between the benchmark targets</h3><p>MORCA improves all three fidelity metrics over SeaCache across the sampled speedups on Wan2.2. The separation is most pronounced in the middle of the range.</p></div>
-            </div>
-          </details>
-          <details>
-            <summary>Cache schedules and training</summary>
-            <div class="split figure-note">
-              <figure class="paper-figure">
-            <a class="figure-link" href="assets/schedules.webp?v=20261120" aria-label="Open full-size figure. Four cache schedules for one CogVideoX astronaut prompt, with original video frames above the traces.">
-              <img src="assets/schedules.webp?v=20261120" width="1500" height="860" loading="lazy" decoding="async" alt="Four cache schedules for one CogVideoX astronaut prompt, with original video frames above the traces.">
-            </a>
-            <figcaption>A CogVideoX example at a 2.4× target. The traces show where each schedule recomputes or reuses a residual.</figcaption>
-          </figure>
-              <div class="prose"><h3>Different placements, one budget</h3><p>The example compares SeaCache, a fixed learned schedule (A), a scheduler with step-error signals (B), and MORCA with latent features (C). Each trace has 18 recomputations and 32 reuses.</p>
-                <a href="#videos" data-example="astronaut-in-slow-motion">Watch the scheduling example</a>
-                <h3>Training on Wan2.1</h3><p>With 4,000 offline trajectories and 1,600 additional trajectories, the paper reports 20.95 dB after online fine-tuning, compared with 20.29 dB for offline-only training. Both reach 3.01× speedup.</p>
-              </div>
-            </div>
-          </details>
-          <details>
-            <summary>VBench and human preferences</summary>
-            <div class="split figure-note">
-              <div class="prose">
-                <h3>CogVideoX at the 2.4× target</h3>
-                <p>VBench assesses visual and semantic quality. The uncached reference scores 77.44 overall, SeaCache scores 77.17, and MORCA scores 76.83.</p>
-                <table class="compact"><caption>VBench scores (%) ↑</caption>
-                  <thead><tr><th scope="col">Method</th><th scope="col">Quality</th><th scope="col">Semantic</th><th scope="col">Total</th></tr></thead>
-                  <tbody>                    <tr><th scope="row">Original</th><td>80.35</td><td>65.80</td><td>77.44</td></tr>                    <tr><th scope="row">TeaCache</th><td><strong>79.93</strong></td><td>65.99</td><td><u>77.14</u></td></tr>                    <tr><th scope="row">MagCache</th><td>79.71</td><td><u>66.53</u></td><td>77.07</td></tr>                    <tr><th scope="row">DiCache</th><td><u>79.88</u></td><td>64.83</td><td>76.87</td></tr>                    <tr><th scope="row">SeaCache</th><td>79.73</td><td><strong>66.90</strong></td><td><strong>77.17</strong></td></tr>                    <tr><th scope="row">MORCA</th><td>79.55</td><td>65.95</td><td>76.83</td></tr>                  </tbody>
-                </table>
-              </div>
-              <figure class="paper-figure">
-            <a class="figure-link" href="assets/user-study.webp?v=20261120" aria-label="Open full-size figure. Human preference on Wan2.2 for perceptual quality and fidelity to the reference.">
-              <img src="assets/user-study.webp?v=20261120" width="1150" height="645" loading="lazy" decoding="async" alt="Human preference on Wan2.2 for perceptual quality and fidelity to the reference.">
-            </a>
-            <figcaption>Thirty participants judged Wan2.2 video pairs from 100 prompts. For fidelity to the reference, 74% of judgments favored MORCA, 9% favored SeaCache, and 17% were ties. For perceptual quality, 45% were ties.</figcaption>
-          </figure>
-            </div>
-          </details>
+          <div class="prose"><h3>Between the benchmark targets</h3><p>MORCA improves all three fidelity metrics over SeaCache across the sampled speedups on Wan2.2. The separation is most pronounced in the middle of the range.</p></div>
         </div>
       </div>
     </section>
