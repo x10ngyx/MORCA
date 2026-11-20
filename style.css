@@ -328,7 +328,7 @@ footer { color: var(--white); background: var(--night); }
 @media (max-width: 640px) {
   .shell { width: 91%; }
   .cover-main { grid-template-columns: 1fr; gap: 1.5rem; padding-block: 2rem 1.4rem; }
-  .cover-art { aspect-ratio: 832 / 480; }
+  .cover-art { aspect-ratio: 832 / 458; }
   .masthead { min-height: 4.1rem; }
   .masthead nav, .footer-inner nav { gap: .9rem; }
   .masthead nav { column-gap: .65rem; }
