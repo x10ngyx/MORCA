@@ -112,13 +112,6 @@ button { color: inherit; }
   text-decoration: none;
 }
 .masthead nav a:hover, .footer-inner a:hover { color: var(--mint); }
-.case-context {
-  font-weight: 780;
-  letter-spacing: .1em;
-  font-size: .83rem;
-  line-height: 1.55;
-  text-transform: uppercase;
-}
 .cover h1 {
   font-size: clamp(5rem, 8.6vw, 9rem);
   line-height: .97;
@@ -181,7 +174,7 @@ h2 {
 h2 em { font-family: var(--serif); font-weight: 400; letter-spacing: -.05em; color: var(--teal); }
 .section-heading > p { max-width: 25rem; font-size: 1.03rem; line-height: 1.6; color: var(--muted); }
 .section.film-section { padding-block: clamp(2.25rem, 4.4vw, 4rem); }
-.film-player, .static-film { max-width: min(82vw, 60rem); margin-inline: auto; }
+.film-player, .static-film { max-width: min(82vw, 60rem); }
 .film-player { overflow: hidden; border-radius: .45rem; background: var(--night); color: var(--white); }
 #project-film, .static-film { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--night); }
 #project-film:focus-visible { outline-offset: -5px; }
@@ -199,6 +192,46 @@ h3 {
   letter-spacing: -.044em;
   line-height: 1.16;
 }
+.featured-examples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(1.65rem, 3.1vw, 2.8rem) clamp(1.3rem, 3.4vw, 3rem);
+}
+.comparison-board { position: relative; }
+.comparison-board video { width: 100%; height: auto; cursor: pointer; }
+.comparison-board video:focus-visible { outline-offset: 2px; }
+.method-labels {
+  position: absolute; inset: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr;
+  /* Each board is 1428 pixels wide, with two 12-pixel gutters. */
+  column-gap: calc(100% / 119);
+  margin: 0; padding: 0; list-style: none;
+  pointer-events: none;
+}
+.method-labels li { display: flex; align-items: center; align-self: end; height: 20%; }
+.method-labels a {
+  display: inline-flex; align-items: center; height: 100%; max-width: 100%;
+  color: var(--ink); font-size: clamp(.74rem, 1.05vw, .92rem);
+  line-height: 1; font-weight: 720;
+  text-decoration: none; pointer-events: auto;
+}
+.method-labels .ours a { color: var(--teal); font-weight: 850; }
+.method-labels a:hover, .method-labels a:focus-visible { text-decoration: underline; }
+.featured-case .prompt { margin-top: .36rem; font-size: clamp(1.12rem, 1.65vw, 1.52rem); }
+.more-examples { margin-top: clamp(1.8rem, 3.4vw, 3.3rem); border-block: 1px solid var(--line); }
+.more-examples summary {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 3.65rem; gap: 1rem; cursor: pointer; list-style: none;
+  color: var(--teal); font-weight: 760;
+}
+.more-examples summary::-webkit-details-marker { display: none; }
+.more-examples summary::after {
+  content: ""; width: .55rem; height: .55rem; margin: 0 .45rem .25rem 0;
+  border: solid currentColor; border-width: 0 1.8px 1.8px 0; transform: rotate(45deg);
+}
+.more-examples[open] summary::after { transform: rotate(225deg); margin-bottom: -.25rem; }
+.gallery-panel { padding: .75rem 0 1.55rem; }
 .gallery-tools {
   display: grid;
   grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr);
@@ -230,7 +263,6 @@ select {
   text-overflow: ellipsis;
 }
 .case-heading { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin: 2rem 0 1.12rem; }
-.case-context { color: var(--teal); }
 .prompt { margin-top: .38rem; font: italic clamp(1.5rem, 2.3vw, 2.2rem)/1.2 var(--serif); letter-spacing: -.02em; }
 .status { color: var(--muted); font-size: .87rem; line-height: 1.45; }
 .status:empty { display: none; }
@@ -252,6 +284,7 @@ select {
 .paper-figure img { width: 100%; height: auto; }
 .paper-figure > figcaption, .table-key { color: var(--muted); line-height: 1.6; font-size: .94rem; }
 .paper-figure > figcaption { margin-top: .75rem; max-width: 88ch; }
+.paper-figure > .overview-copy { color: #334851; font-size: 1.05rem; line-height: 1.72; }
 .abstract-row {
   display: grid; grid-template-columns: minmax(8rem, .4fr) 1.6fr; gap: clamp(1.5rem, 4vw, 4rem);
   margin: 2.5rem 0 0; padding-top: 2rem;
@@ -330,6 +363,7 @@ footer { color: var(--white); background: var(--night); }
   .section { padding-block: 3.5rem; }
   h2 { font-size: clamp(2.35rem, 9.5vw, 3.25rem); }
   .section-heading { margin-bottom: 1.5rem; }
+  .featured-examples { grid-template-columns: minmax(0, 1fr); }
   .gallery-tools { grid-template-columns: minmax(0,.8fr) minmax(0,1.4fr); gap: .85rem .6rem; }
   select { padding-left: .63rem; min-height: 2.85rem; }
   .case-heading { align-items: start; flex-direction: column; gap: .35rem; margin-top: 1.45rem; }

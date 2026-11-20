@@ -12,7 +12,7 @@ function followViewport(surface, setActive, isPaused, threshold = 0) {
     const next = visible && enabled && !document.hidden;
     if (next !== active || force) {
       active = next;
-      setActive(active);
+      setActive(active, visible);
     }
   }
 
@@ -179,16 +179,34 @@ function keepInSync(members, signal) {
 }
 
 function setupGallery() {
-  const cases = JSON.parse(document.querySelector('#comparison-data').textContent);
+  const featured = [...document.querySelectorAll('.featured-case')];
+  for (const card of featured) {
+    const video = card.querySelector('video');
+    video.tabIndex = 0;
+    followViewport(video, (active, visible) => {
+      if (active) {
+        if (video.error) video.load();
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+        // A board leaving the viewport can release its decoder for the next row.
+        if (!visible) video.load();
+      }
+    }, () => video.paused, .15);
+  }
+
+  const featuredIds = new Set(featured.map(card => card.dataset.case));
+  const cases = JSON.parse(document.querySelector('#comparison-data').textContent)
+    .filter(item => !featuredIds.has(item.id));
+  const more = document.querySelector('#more-examples');
   const model = document.querySelector('#model-select');
   const example = document.querySelector('#example-select');
   const grid = document.querySelector('#clip-grid');
   const status = document.querySelector('#play-status');
   const prompt = document.querySelector('#case-prompt');
-  const context = document.querySelector('#case-context');
   let active = false;
   let operation;
-  let videos = Array.from(grid.querySelectorAll('video'));
+  let videos = [];
 
   function stop() {
     operation?.abort();
@@ -198,7 +216,7 @@ function setupGallery() {
   }
 
   async function start() {
-    if (operation) return;
+    if (operation || !more.open || !videos.length) return;
     const time = videos[0].currentTime;
     const job = new AbortController();
     operation = job;
@@ -228,17 +246,19 @@ function setupGallery() {
     example.replaceChildren(...choices.map(item => new Option(item.title + ' · ' + item.target, item.id)));
   }
 
-  function selectCase() {
-    const item = cases.find(candidate => candidate.id === example.value);
+  function clearCase() {
     stop();
     for (const video of videos) {
       video.removeAttribute('src');
       video.load();
     }
-    const type = item.figure === 4 ? 'Main comparison'
-      : item.figure === 5 ? 'Scheduler variants'
-      : item.figure === 8 ? 'Matched reuse budget' : 'Additional comparison';
-    context.textContent = [item.model, item.target + ' target', type].join(' · ');
+    grid.replaceChildren();
+    videos = [];
+  }
+
+  function selectCase() {
+    clearCase();
+    const item = cases.find(candidate => candidate.id === example.value);
     prompt.textContent = '“' + item.prompt + '”';
     const clips = item.clips.map(clip => {
       const figure = document.createElement('figure');
@@ -270,19 +290,33 @@ function setupGallery() {
     if (active) start();
   }
 
-  followViewport(grid, next => {
+  followViewport(grid, (next, visible) => {
     active = next;
     if (active) start();
-    else stop();
+    else {
+      stop();
+      if (!visible) {
+        for (const video of videos) {
+          video.preload = 'none';
+          video.load();
+        }
+      }
+    }
   }, () => !operation);
   model.addEventListener('change', () => {
     fillExamples();
     selectCase();
   });
   example.addEventListener('change', selectCase);
-  model.value = cases[0].model;
+  more.addEventListener('toggle', () => {
+    if (more.open) selectCase();
+    else clearCase();
+  });
+  const models = [...new Set(cases.map(item => item.model))];
+  model.replaceChildren(...models.map(name => new Option(name, name)));
   fillExamples();
-  document.querySelector('#gallery-tools').hidden = false;
+  document.querySelector('#gallery-panel').hidden = false;
+  if (more.open) selectCase();
 }
 
 setupCover();
