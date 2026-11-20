@@ -10,11 +10,11 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="MORCA · Adaptive Cache Reuse in Video Diffusion">
   <meta property="og:description" content="A latent-aware scheduler for video diffusion, with results and playable comparisons across three models.">
-  <meta property="og:image" content="https://x10ngyx.github.io/MORCA/assets/cover.webp">
+  <meta property="og:image" content="https://x10ngyx.github.io/MORCA/assets/cover.webp?v=20261121-cover-selection">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23141e2d'/%3E%3Cpath d='M9 34V14l15 15 15-15v20' stroke='%239ed9d4' stroke-width='5' fill='none'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=20261121-standard-clips">
-  <script defer src="videos.js?v=20261121-standard-clips"></script>
+  <link rel="stylesheet" href="style.css?v=20261121-quantitative">
+  <script defer src="videos.js?v=20261121-gallery-selection"></script>
 </head>
 <body>
   <a class="skip-link" href="#project-video">Skip to the project video</a>
@@ -24,7 +24,7 @@
         <a href="#project-video">Project video</a>
         <a href="#videos">Generation results</a>
         <a href="#method">Method</a>
-        <a href="#results">Results</a>
+        <a href="#results">Quantitative results</a>
       </nav>
     </div>
     <div class="cover-main shell">
@@ -39,18 +39,18 @@
       <div class="cover-art" aria-hidden="true">
         <picture>
           <source media="(max-width: 640px)" srcset="assets/clips/cow-and-elephant/morca.webp" data-loop="assets/cover-loop-mobile.webp">
-          <img src="assets/cover.webp" data-loop="assets/cover-loop.webp" width="1566" height="862" fetchpriority="high" alt="">
+          <img src="assets/cover.webp?v=20261121-cover-selection" data-loop="assets/cover-loop.webp?v=20261121-cover-selection" width="1566" height="862" fetchpriority="high" alt="">
         </picture>
         <video id="cover-video" autoplay muted playsinline loop preload="auto" tabindex="-1">
           <source media="(max-width: 640px)" src="assets/clips/cow-and-elephant/morca.mp4" type="video/mp4">
-          <source src="assets/cover.mp4" type="video/mp4">
+          <source src="assets/cover.mp4?v=20261121-cover-selection" type="video/mp4">
         </video>
       </div>
     </div>
     <div class="shell credits">
       <div class="authors" aria-label="Authors">
         <span>Yuxiang Xiong<sup>1*</sup></span><span>Ruiyan Wang<sup>1*</sup></span><span>Wenqiang Wang<sup>2*</sup></span><span>Teng Hu<sup>1‡</sup></span>
-        <span>Songhang Shen<sup>1</sup></span><span>Bohao Feng<sup>3</sup></span><span>Hongqian Deng<sup>2</sup></span><span>Ran Yi<sup>1†</sup></span>
+        <span>Songhang Shen<sup>1</sup></span><span>Ye Pan<sup>1</sup></span><span>Bohao Feng<sup>3</sup></span><span>Hongqian Deng<sup>2</sup></span><span>Ran Yi<sup>1†</sup></span>
       </div>
       <div class="affiliations">
         <span><sup>1</sup> Shanghai Jiao Tong University</span>
@@ -135,42 +135,42 @@
               <button type="button" class="group-toggle" aria-controls="clips-cow-and-elephant" aria-describedby="prompt-cow-and-elephant" hidden>Play</button>
             </figcaption>
           </figure>
-          <figure class="featured-case" data-case="dog-grooming">
-            <div class="featured-clips" id="clips-dog-grooming" role="group" aria-labelledby="prompt-dog-grooming">
+          <figure class="featured-case" data-case="tennis-racket">
+            <div class="featured-clips" id="clips-tennis-racket" role="group" aria-labelledby="prompt-tennis-racket">
               <figure class="clip">
                 <video controls muted loop playsinline preload="none" width="832" height="480"
-                       src="assets/clips/dog-grooming/original.mp4" poster="assets/clips/dog-grooming/original.webp" aria-label="Original, Dog grooming"></video>
-                <figcaption><a href="assets/clips/dog-grooming/original.mp4" aria-label="Original, Dog grooming, full-resolution clip">Original</a></figcaption>
+                       src="assets/clips/tennis-racket/original.mp4" poster="assets/clips/tennis-racket/original.webp" aria-label="Original, Tennis racket and bottle"></video>
+                <figcaption><a href="assets/clips/tennis-racket/original.mp4" aria-label="Original, Tennis racket and bottle, full-resolution clip">Original</a></figcaption>
               </figure>
               <figure class="clip ours">
                 <video controls muted loop playsinline preload="none" width="832" height="480"
-                       src="assets/clips/dog-grooming/morca.mp4" poster="assets/clips/dog-grooming/morca.webp" aria-label="MORCA, Dog grooming"></video>
-                <figcaption><a href="assets/clips/dog-grooming/morca.mp4" aria-label="MORCA, Dog grooming, full-resolution clip">MORCA</a></figcaption>
+                       src="assets/clips/tennis-racket/morca.mp4" poster="assets/clips/tennis-racket/morca.webp" aria-label="MORCA, Tennis racket and bottle"></video>
+                <figcaption><a href="assets/clips/tennis-racket/morca.mp4" aria-label="MORCA, Tennis racket and bottle, full-resolution clip">MORCA</a></figcaption>
               </figure>
               <figure class="clip">
                 <video controls muted loop playsinline preload="none" width="832" height="480"
-                       src="assets/clips/dog-grooming/seacache.mp4" poster="assets/clips/dog-grooming/seacache.webp" aria-label="SeaCache, Dog grooming"></video>
-                <figcaption><a href="assets/clips/dog-grooming/seacache.mp4" aria-label="SeaCache, Dog grooming, full-resolution clip">SeaCache</a></figcaption>
+                       src="assets/clips/tennis-racket/seacache.mp4" poster="assets/clips/tennis-racket/seacache.webp" aria-label="SeaCache, Tennis racket and bottle"></video>
+                <figcaption><a href="assets/clips/tennis-racket/seacache.mp4" aria-label="SeaCache, Tennis racket and bottle, full-resolution clip">SeaCache</a></figcaption>
               </figure>
               <figure class="clip">
                 <video controls muted loop playsinline preload="none" width="832" height="480"
-                       src="assets/clips/dog-grooming/teacache.mp4" poster="assets/clips/dog-grooming/teacache.webp" aria-label="TeaCache, Dog grooming"></video>
-                <figcaption><a href="assets/clips/dog-grooming/teacache.mp4" aria-label="TeaCache, Dog grooming, full-resolution clip">TeaCache</a></figcaption>
+                       src="assets/clips/tennis-racket/teacache.mp4" poster="assets/clips/tennis-racket/teacache.webp" aria-label="TeaCache, Tennis racket and bottle"></video>
+                <figcaption><a href="assets/clips/tennis-racket/teacache.mp4" aria-label="TeaCache, Tennis racket and bottle, full-resolution clip">TeaCache</a></figcaption>
               </figure>
               <figure class="clip">
                 <video controls muted loop playsinline preload="none" width="832" height="480"
-                       src="assets/clips/dog-grooming/magcache.mp4" poster="assets/clips/dog-grooming/magcache.webp" aria-label="MagCache, Dog grooming"></video>
-                <figcaption><a href="assets/clips/dog-grooming/magcache.mp4" aria-label="MagCache, Dog grooming, full-resolution clip">MagCache</a></figcaption>
+                       src="assets/clips/tennis-racket/magcache.mp4" poster="assets/clips/tennis-racket/magcache.webp" aria-label="MagCache, Tennis racket and bottle"></video>
+                <figcaption><a href="assets/clips/tennis-racket/magcache.mp4" aria-label="MagCache, Tennis racket and bottle, full-resolution clip">MagCache</a></figcaption>
               </figure>
               <figure class="clip">
                 <video controls muted loop playsinline preload="none" width="832" height="480"
-                       src="assets/clips/dog-grooming/dicache.mp4" poster="assets/clips/dog-grooming/dicache.webp" aria-label="DiCache, Dog grooming"></video>
-                <figcaption><a href="assets/clips/dog-grooming/dicache.mp4" aria-label="DiCache, Dog grooming, full-resolution clip">DiCache</a></figcaption>
+                       src="assets/clips/tennis-racket/dicache.mp4" poster="assets/clips/tennis-racket/dicache.webp" aria-label="DiCache, Tennis racket and bottle"></video>
+                <figcaption><a href="assets/clips/tennis-racket/dicache.mp4" aria-label="DiCache, Tennis racket and bottle, full-resolution clip">DiCache</a></figcaption>
               </figure>
             </div>
             <figcaption class="featured-caption">
-              <span class="prompt" id="prompt-dog-grooming">“A person is grooming dog”</span>
-              <button type="button" class="group-toggle" aria-controls="clips-dog-grooming" aria-describedby="prompt-dog-grooming" hidden>Play</button>
+              <span class="prompt" id="prompt-tennis-racket">“a tennis racket and a bottle”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-tennis-racket" aria-describedby="prompt-tennis-racket" hidden>Play</button>
             </figcaption>
           </figure>
           <figure class="featured-case" data-case="coffee-cup">
@@ -346,9 +346,9 @@
                 <li><strong>Wan2.2 · Orange chair · 2.4×</strong> <a href="assets/clips/orange-chair/original.mp4">Original</a> <a href="assets/clips/orange-chair/morca.mp4">MORCA</a> <a href="assets/clips/orange-chair/seacache.mp4">SeaCache</a> <a href="assets/clips/orange-chair/teacache.mp4">TeaCache</a> <a href="assets/clips/orange-chair/magcache.mp4">MagCache</a> <a href="assets/clips/orange-chair/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.2 · Bicycle and car · 2.4×</strong> <a href="assets/clips/bicycle-and-car/original.mp4">Original</a> <a href="assets/clips/bicycle-and-car/morca.mp4">MORCA</a> <a href="assets/clips/bicycle-and-car/seacache.mp4">SeaCache</a> <a href="assets/clips/bicycle-and-car/teacache.mp4">TeaCache</a> <a href="assets/clips/bicycle-and-car/magcache.mp4">MagCache</a> <a href="assets/clips/bicycle-and-car/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.2 · Banana and apple · 3.0×</strong> <a href="assets/clips/banana-and-apple/original.mp4">Original</a> <a href="assets/clips/banana-and-apple/morca.mp4">MORCA</a> <a href="assets/clips/banana-and-apple/seacache.mp4">SeaCache</a> <a href="assets/clips/banana-and-apple/teacache.mp4">TeaCache</a> <a href="assets/clips/banana-and-apple/magcache.mp4">MagCache</a> <a href="assets/clips/banana-and-apple/dicache.mp4">DiCache</a></li>
+                <li><strong>Wan2.1 · Dog grooming · 2.4×</strong> <a href="assets/clips/dog-grooming/original.mp4">Original</a> <a href="assets/clips/dog-grooming/morca.mp4">MORCA</a> <a href="assets/clips/dog-grooming/seacache.mp4">SeaCache</a> <a href="assets/clips/dog-grooming/teacache.mp4">TeaCache</a> <a href="assets/clips/dog-grooming/magcache.mp4">MagCache</a> <a href="assets/clips/dog-grooming/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Cyberpunk astronaut · 2.4×</strong> <a href="assets/clips/cyberpunk-astronaut/original.mp4">Original</a> <a href="assets/clips/cyberpunk-astronaut/morca.mp4">MORCA</a> <a href="assets/clips/cyberpunk-astronaut/seacache.mp4">SeaCache</a> <a href="assets/clips/cyberpunk-astronaut/teacache.mp4">TeaCache</a> <a href="assets/clips/cyberpunk-astronaut/magcache.mp4">MagCache</a> <a href="assets/clips/cyberpunk-astronaut/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Leg massage · 2.4×</strong> <a href="assets/clips/leg-massage/original.mp4">Original</a> <a href="assets/clips/leg-massage/morca.mp4">MORCA</a> <a href="assets/clips/leg-massage/seacache.mp4">SeaCache</a> <a href="assets/clips/leg-massage/teacache.mp4">TeaCache</a> <a href="assets/clips/leg-massage/magcache.mp4">MagCache</a> <a href="assets/clips/leg-massage/dicache.mp4">DiCache</a></li>
-                <li><strong>Wan2.1 · Tennis racket and bottle · 3.0×</strong> <a href="assets/clips/tennis-racket/original.mp4">Original</a> <a href="assets/clips/tennis-racket/morca.mp4">MORCA</a> <a href="assets/clips/tennis-racket/seacache.mp4">SeaCache</a> <a href="assets/clips/tennis-racket/teacache.mp4">TeaCache</a> <a href="assets/clips/tennis-racket/magcache.mp4">MagCache</a> <a href="assets/clips/tennis-racket/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Keyboard · 4.0×</strong> <a href="assets/clips/keyboard/original.mp4">Original</a> <a href="assets/clips/keyboard/morca.mp4">MORCA</a> <a href="assets/clips/keyboard/seacache.mp4">SeaCache</a> <a href="assets/clips/keyboard/teacache.mp4">TeaCache</a> <a href="assets/clips/keyboard/magcache.mp4">MagCache</a> <a href="assets/clips/keyboard/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Toaster and microwave · 4.0×</strong> <a href="assets/clips/toaster-and-microwave/original.mp4">Original</a> <a href="assets/clips/toaster-and-microwave/morca.mp4">MORCA</a> <a href="assets/clips/toaster-and-microwave/seacache.mp4">SeaCache</a> <a href="assets/clips/toaster-and-microwave/teacache.mp4">TeaCache</a> <a href="assets/clips/toaster-and-microwave/magcache.mp4">MagCache</a> <a href="assets/clips/toaster-and-microwave/dicache.mp4">DiCache</a></li>
                 <li><strong>CogVideoX · Petting an animal · 1.8×</strong> <a href="assets/clips/petting-an-animal/original.mp4">Original</a> <a href="assets/clips/petting-an-animal/morca.mp4">MORCA</a> <a href="assets/clips/petting-an-animal/seacache.mp4">SeaCache</a> <a href="assets/clips/petting-an-animal/teacache.mp4">TeaCache</a> <a href="assets/clips/petting-an-animal/magcache.mp4">MagCache</a> <a href="assets/clips/petting-an-animal/dicache.mp4">DiCache</a></li>
@@ -375,7 +375,7 @@
           </figure>
         <div id="abstract" class="abstract-row">
           <h3>Abstract</h3>
-          <p>Diffusion Transformers (DiTs) have achieved remarkable performance in video synthesis, but their iterative denoising process suffers from high inference latency. Caching has emerged as an effective acceleration strategy by exploiting inter-step redundancy during denoising. Existing dynamic caching methods typically estimate the error that cache reuse would introduce at each denoising step (step error) to guide cache decisions, whereas our concern is how much fidelity loss cache reuse would cause in the final generated video (terminal error). We show that step error does not directly correspond to terminal error and latent information helps capture their relationship, thereby informing cache decisions. Moreover, these methods rely on threshold-based rules that do not provide precise speedup control, making it difficult to meet user-specified acceleration targets. <span class="abstract-highlight">To address these limitations, we introduce MORCA, a cache scheduling framework trained through offline-to-online reinforcement learning to make latent-aware reuse/recompute decisions under user-specified acceleration targets.</span> Extensive experiments on different video generation models across multiple speedup targets demonstrate that MORCA achieves better speed–fidelity trade-offs than state-of-the-art caching methods.</p>
+          <p>Diffusion Transformers (DiTs) have achieved remarkable performance in video synthesis, but their iterative denoising process suffers from high inference latency. Caching has emerged as an effective acceleration strategy by exploiting inter-step redundancy during denoising. Existing dynamic caching methods typically estimate the error that cache reuse would introduce at each denoising step (step error) to guide cache decisions, whereas our concern is how much fidelity loss cache reuse would cause in the final generated video (terminal error). We show that step error does not directly correspond to terminal error and latent information helps capture their relationship, thereby informing cache decisions. Moreover, these methods rely on threshold-based rules that do not provide precise speedup control, making it difficult to meet user-specified acceleration targets. <span class="abstract-highlight">To address these limitations, we introduce <strong>MORCA</strong>, a cache scheduling framework trained through offline-to-online reinforcement learning to make latent-aware reuse/recompute decisions under user-specified acceleration targets.</span> Extensive experiments on different video generation models across multiple speedup targets demonstrate that MORCA achieves better speed–fidelity trade-offs than state-of-the-art caching methods.</p>
         </div>
         <div class="subsection" id="motivation">
           <div class="section-heading">
@@ -422,7 +422,7 @@
     <section id="results" class="section results">
       <div class="shell">
         <div class="section-heading">
-          <h2>Benchmark <em>results</em></h2>
+          <h2>Quantitative <em>results</em></h2>
           <p>All three models use 50 denoising steps and 200 prompts. Speedup is relative to uncached runtime. Fidelity is measured against the uncached video.</p>
         </div>
         <div class="benchmark-grid">

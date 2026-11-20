@@ -282,8 +282,8 @@ function setupGallery() {
   const more = document.querySelector('#more-examples');
   setupFeaturedComparisons(featured, more);
   const featuredIds = new Set(featured.map(card => card.dataset.case));
-  const cases = JSON.parse(document.querySelector('#comparison-data').textContent)
-    .filter(item => !featuredIds.has(item.id));
+  const allCases = JSON.parse(document.querySelector('#comparison-data').textContent);
+  const cases = allCases.filter(item => !featuredIds.has(item.id));
   const model = document.querySelector('#model-select');
   const example = document.querySelector('#example-select');
   const grid = document.querySelector('#clip-grid');
@@ -397,7 +397,7 @@ function setupGallery() {
     if (more.open) selectCase();
     else clearCase();
   });
-  const models = [...new Set(cases.map(item => item.model))];
+  const models = [...new Set(allCases.map(item => item.model))].filter(name => cases.some(item => item.model === name));
   model.replaceChildren(...models.map(name => new Option(name, name)));
   fillExamples();
   document.querySelector('#gallery-panel').hidden = false;
