@@ -1,50 +1,429 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="MORCA: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration"><title>MORCA: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</title><link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet"><link rel="stylesheet" href="style.css?v=20261013-result-groups"></head><body>
-<section class="hero"><div class="hero-body"><div class="container"><h1 class="publication-title">MORCA: Offline-to-Online Reinforcement Learning<br>for Adaptive Cache Reuse in Video Diffusion Acceleration</h1><div class="publication-authors"><span class="author-block">Yuxiang Xiong<sup>1*</sup></span>,
-<span class="author-block">Ruiyan Wang<sup>1*</sup></span>,
-<span class="author-block">Wenqiang Wang<sup>2*</sup></span>,
-<span class="author-block">Teng Hu<sup>1‡</sup></span>,
-<span class="author-block">Songhang Shen<sup>1</sup></span>,
-<span class="author-block">Bohao Feng<sup>3</sup></span>,
-<span class="author-block">Hongqian Deng<sup>2</sup></span>,
-<span class="author-block">Ran Yi<sup>1†</sup></span></div><div class="affiliations"><span class="author-block"><sup>1</sup>Shanghai Jiao Tong University</span> <span class="author-block"><sup>2</sup>Alibaba Cloud Computing</span> <span class="author-block"><sup>3</sup>Alibaba Token Hub, Alibaba Group</span></div><div class="contributions"><span><sup>*</sup>Equal contribution</span><span><sup>†</sup>Corresponding author</span><span><sup>‡</sup>Project leader</span></div><div class="publication-links"><a href="https://arxiv.org/abs/2610.10457" class="button" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6zM14 2v5h4M9 12h6M9 16h6"/></svg><span>Paper</span></a><a href="https://github.com/x10ngyx/MORCA" class="button" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M12 .9a11.1 11.1 0 0 0-3.5 21.6c.6.1.8-.3.8-.6v-2.2c-3.4.7-4.1-1.4-4.1-1.4-.5-1.3-1.2-1.6-1.2-1.6-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.4-5.5-6.1 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.2-3.3 0 0 1-.3 3.4 1.3a11.6 11.6 0 0 1 6.2 0c2.4-1.6 3.4-1.3 3.4-1.3.7 1.7.3 3 .2 3.3.8.9 1.2 2 1.2 3.3 0 4.7-2.8 5.8-5.5 6.1.5.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.1 11.1 0 0 0 12 .9z"/></svg><span>Code</span></a></div></div></div></section>
-<section class="section"><div class="container"><h2 class="section-title">Overview</h2><div class="section-divider"></div><img src="assets/framework.webp" class="paper-figure" style="max-width:860px" width="2400" height="912" alt="Overview of the MORCA framework"><div class="content overview-text"><p>MORCA is a cache scheduling framework for accelerating video diffusion models. At each denoising step, a lightweight, latent-aware scheduler decides whether to reuse cached outputs from earlier timesteps or recompute, under a reuse budget derived from the user-specified target speedup. The scheduler is first trained offline on pre-collected trajectories and then refined through online reinforcement learning.</p></div></div></section>
-<section class="section"><div class="container"><h2 class="section-title">Abstract</h2><div class="section-divider"></div><div class="content abstract-text"><p>Diffusion Transformers (DiTs) achieve remarkable performance in video synthesis, but their iterative denoising process suffers from high inference latency. To address this, caching has emerged as an effective acceleration strategy by capitalizing on inter-step redundancy during denoising. Existing dynamic caching methods typically estimate the error that cache reuse would introduce at each denoising step (step error) to guide cache decisions, whereas our concern is how much quality loss cache reuse would cause in the final generated video (terminal error). We show that step error does not directly correspond to terminal error and that latent information helps capture their relationship, thereby informing cache decisions. Moreover, existing threshold-based methods cannot provide precise speedup control, making it difficult to meet practical requirements for user-specified acceleration targets. <span class="abstract-highlight" style="color:#2563b8">To address these limitations, we introduce MORCA, a cache scheduling framework trained through offline-to-online reinforcement learning to make latent-aware reuse/recompute decisions under user-specified acceleration targets.</span> Extensive experiments on different video generation models across multiple target acceleration ratios demonstrate that MORCA achieves better generation fidelity than state-of-the-art caching methods under comparable computational budgets.</p></div></div></section>
-<section class="section"><div class="container"><h2 class="section-title">Motivation</h2><div class="section-divider"></div><div class="content method-text"><p>Existing dynamic caching methods use <strong>step error</strong>—the immediate error introduced by cache reuse—to guide their decisions. Our goal, however, is to minimize <strong>terminal error</strong>: the quality loss in the final generated video.</p></div><img src="assets/motivation.webp" class="paper-figure" style="max-width:860px" width="2000" height="405" alt="Step error and terminal error on Wan2.1"><p class="fig-caption">At each step, we compare reusing the previous step’s cached residual with recomputing the DiT blocks, while computing all other steps normally. Step error is the relative L1 difference between the cached and recomputed residuals; terminal error is assessed using the resulting video’s PSNR relative to the no-cache reference.</p><div class="content method-text"><p><strong>Step error does not directly correspond to terminal error.</strong> On Wan2.1, step error follows similar patterns across prompts, while the resulting terminal error varies substantially. A local error signal alone is therefore insufficient to guide decisions about final video quality.</p><p><strong>Latent information improves terminal-error prediction.</strong> As shown below, adding lightweight features from the current and previous latents improves prediction over using step error alone. This motivates combining latent features with step-error signals in our cache scheduler.</p></div><div class="prediction-table-wrap"><table class="prediction-table"><caption><strong>Latent features improve terminal-error prediction.</strong> Terminal error is measured using PSNR. Results on Wan2.1.</caption><thead><tr><th scope="col">Input</th><th scope="col">RMSE (dB) ↓</th><th scope="col">Spearman ↑</th></tr></thead><tbody><tr><th scope="row">Step error</th><td>6.971</td><td>0.5288</td></tr><tr><th scope="row">Step error + step index</th><td>4.421</td><td>0.7528</td></tr><tr><th scope="row">Step error + latent</th><td>2.849</td><td>0.9357</td></tr><tr><th scope="row">Step error + latent + step index</th><td>2.832</td><td>0.9361</td></tr></tbody></table></div></div></section>
-<section class="section"><div class="container"><h2 class="section-title">Method</h2><div class="section-divider"></div><div class="content method-text scheduler-text"><h3>Budget-Constrained and Latent-Aware Scheduler</h3><figure class="calibration-figure"><img src="assets/calibration.webp" class="paper-figure"  width="1800" height="866" alt="Reuse-budget calibration across speedup targets"><figcaption class="fig-caption">Speedup–reuse calibration maps a user-specified acceleration target to a reuse budget.</figcaption></figure><p><strong>Latent-aware scheduling.</strong> Our motivation study shows that step error alone is insufficient to predict terminal error, while latent information improves prediction. We therefore design a lightweight scheduler that combines latent features with step-error proxies and reuse-budget information, helping it make reuse/recompute decisions based on the quality of the generated video.</p><p><strong>From target speedup to reuse budget.</strong> Given a user-specified target speedup, we use our calibrated relationship between speedup and the number of reuse steps to determine a reuse budget. The scheduler then selects which denoising steps to reuse while satisfying this budget.</p></div><div class="content method-text"><h3>Offline-to-Online Reinforcement Learning Paradigm</h3><p><strong>Offline training.</strong> We collect trajectories using randomly sampled cache schedules across prompts and target speedups, then use Implicit Q-Learning (IQL) to learn an initial scheduler from this pre-collected dataset.</p><p><strong>Online fine-tuning.</strong> Starting from the offline-trained scheduler, we collect new trajectories with the current policy and add them to a replay buffer alongside offline and earlier online data. A short critic warm-up is followed by joint value-function and policy updates using the same IQL procedure, enabling further exploration and policy improvement.</p></div></div></section>
-<section class="section"><div class="container"><h2 class="section-title">Experimental Results</h2><div class="section-divider"></div><h3 class="results-subtitle main-results-title">Quantitative Comparisons</h3><p class="fig-caption" id="main-results-caption">Quantitative comparison with baselines on 200 VBench prompts. Best quality results are bold; second-best results are underlined.</p><h4 class="model-results-title" id="results-wan22">Wan2.2</h4><div class="main-results-scroll" tabindex="0" role="region" aria-label="Wan2.2 quantitative results; scroll horizontally on small screens"><table class="main-results-table" aria-labelledby="results-wan22" aria-describedby="main-results-caption"><thead><tr><th scope="col">Model</th><th scope="col">Target</th><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead><tbody><tr class="group-start"><td>Wan2.2</td><td>—</td><th scope="row">Original</th><td>990.56</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr><tr class="group-start"><td>Wan2.2</td><td>1.8×</td><th scope="row">TeaCache</th><td>562.63</td><td>1.76×</td><td>17.04</td><td>0.5984</td><td>0.2882</td></tr><tr class=""><td>Wan2.2</td><td>1.8×</td><th scope="row">MagCache</th><td>544.78</td><td>1.82×</td><td>16.41</td><td>0.5662</td><td>0.3041</td></tr><tr class=""><td>Wan2.2</td><td>1.8×</td><th scope="row">DiCache</th><td>551.29</td><td>1.80×</td><td>18.51</td><td>0.6516</td><td>0.2232</td></tr><tr class=""><td>Wan2.2</td><td>1.8×</td><th scope="row">SeaCache</th><td>546.99</td><td>1.81×</td><td><u>19.91</u></td><td><u>0.7016</u></td><td><u>0.1888</u></td></tr><tr class="ours-row"><td>Wan2.2</td><td>1.8×</td><th scope="row"><strong>Ours</strong></th><td>549.19</td><td>1.80×</td><td><strong>22.13</strong></td><td><strong>0.7507</strong></td><td><strong>0.1681</strong></td></tr><tr class="group-start"><td>Wan2.2</td><td>2.4×</td><th scope="row">TeaCache</th><td>415.21</td><td>2.39×</td><td>15.31</td><td>0.5325</td><td>0.3658</td></tr><tr class=""><td>Wan2.2</td><td>2.4×</td><th scope="row">MagCache</th><td>417.22</td><td>2.37×</td><td>15.31</td><td>0.5185</td><td>0.3632</td></tr><tr class=""><td>Wan2.2</td><td>2.4×</td><th scope="row">DiCache</th><td>416.43</td><td>2.38×</td><td>16.51</td><td>0.5759</td><td>0.2923</td></tr><tr class=""><td>Wan2.2</td><td>2.4×</td><th scope="row">SeaCache</th><td>419.76</td><td>2.36×</td><td><u>17.38</u></td><td><u>0.6074</u></td><td><u>0.2840</u></td></tr><tr class="ours-row"><td>Wan2.2</td><td>2.4×</td><th scope="row"><strong>Ours</strong></th><td>421.15</td><td>2.35×</td><td><strong>19.24</strong></td><td><strong>0.6516</strong></td><td><strong>0.2513</strong></td></tr><tr class="group-start"><td>Wan2.2</td><td>3.0×</td><th scope="row">TeaCache</th><td>322.88</td><td>3.07×</td><td>14.40</td><td>0.4913</td><td>0.4211</td></tr><tr class=""><td>Wan2.2</td><td>3.0×</td><th scope="row">MagCache</th><td>332.74</td><td>2.98×</td><td>13.41</td><td>0.4336</td><td>0.4839</td></tr><tr class=""><td>Wan2.2</td><td>3.0×</td><th scope="row">DiCache</th><td>340.50</td><td>2.91×</td><td><u>15.54</u></td><td><u>0.5259</u></td><td><u>0.3623</u></td></tr><tr class=""><td>Wan2.2</td><td>3.0×</td><th scope="row">SeaCache</th><td>320.41</td><td>3.09×</td><td>14.99</td><td>0.5151</td><td>0.3941</td></tr><tr class="ours-row"><td>Wan2.2</td><td>3.0×</td><th scope="row"><strong>Ours</strong></th><td>326.93</td><td>3.03×</td><td><strong>16.77</strong></td><td><strong>0.5639</strong></td><td><strong>0.3435</strong></td></tr></tbody></table></div><h4 class="model-results-title" id="results-wan21">Wan2.1</h4><div class="main-results-scroll" tabindex="0" role="region" aria-label="Wan2.1 quantitative results; scroll horizontally on small screens"><table class="main-results-table" aria-labelledby="results-wan21" aria-describedby="main-results-caption"><thead><tr><th scope="col">Model</th><th scope="col">Target</th><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead><tbody><tr class="group-start"><td>Wan2.1</td><td>—</td><th scope="row">Original</th><td>255.94</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr><tr class="group-start"><td>Wan2.1</td><td>2.4×</td><th scope="row">TeaCache</th><td>106.82</td><td>2.40×</td><td>20.12</td><td>0.7361</td><td>0.1596</td></tr><tr class=""><td>Wan2.1</td><td>2.4×</td><th scope="row">MagCache</th><td>107.54</td><td>2.38×</td><td>22.31</td><td>0.8075</td><td>0.1198</td></tr><tr class=""><td>Wan2.1</td><td>2.4×</td><th scope="row">DiCache</th><td>108.27</td><td>2.36×</td><td>22.28</td><td>0.8139</td><td><strong>0.0992</strong></td></tr><tr class=""><td>Wan2.1</td><td>2.4×</td><th scope="row">SeaCache</th><td>109.00</td><td>2.35×</td><td><u>22.86</u></td><td><u>0.8174</u></td><td>0.1131</td></tr><tr class="ours-row"><td>Wan2.1</td><td>2.4×</td><th scope="row"><strong>Ours</strong></th><td>109.68</td><td>2.33×</td><td><strong>23.91</strong></td><td><strong>0.8279</strong></td><td><u>0.1073</u></td></tr><tr class="group-start"><td>Wan2.1</td><td>3.0×</td><th scope="row">TeaCache</th><td>87.71</td><td>2.92×</td><td>17.39</td><td>0.6199</td><td>0.2674</td></tr><tr class=""><td>Wan2.1</td><td>3.0×</td><th scope="row">MagCache</th><td>86.09</td><td>2.97×</td><td><u>20.04</u></td><td>0.6888</td><td>0.1910</td></tr><tr class=""><td>Wan2.1</td><td>3.0×</td><th scope="row">DiCache</th><td>86.82</td><td>2.95×</td><td>19.69</td><td><u>0.7170</u></td><td><u>0.1813</u></td></tr><tr class=""><td>Wan2.1</td><td>3.0×</td><th scope="row">SeaCache</th><td>84.66</td><td>3.02×</td><td>18.78</td><td>0.6710</td><td>0.2226</td></tr><tr class="ours-row"><td>Wan2.1</td><td>3.0×</td><th scope="row"><strong>Ours</strong></th><td>84.98</td><td>3.01×</td><td><strong>20.95</strong></td><td><strong>0.7244</strong></td><td><strong>0.1745</strong></td></tr><tr class="group-start"><td>Wan2.1</td><td>4.0×</td><th scope="row">TeaCache</th><td>64.16</td><td>3.99×</td><td>14.09</td><td>0.4625</td><td>0.4554</td></tr><tr class=""><td>Wan2.1</td><td>4.0×</td><th scope="row">MagCache</th><td>64.09</td><td>3.99×</td><td>17.03</td><td>0.4974</td><td>0.3917</td></tr><tr class=""><td>Wan2.1</td><td>4.0×</td><th scope="row">DiCache</th><td>64.24</td><td>3.98×</td><td>14.68</td><td>0.4611</td><td>0.4198</td></tr><tr class=""><td>Wan2.1</td><td>4.0×</td><th scope="row">SeaCache</th><td>64.91</td><td>3.94×</td><td><u>17.13</u></td><td><u>0.5840</u></td><td><u>0.3025</u></td></tr><tr class="ours-row"><td>Wan2.1</td><td>4.0×</td><th scope="row"><strong>Ours</strong></th><td>65.49</td><td>3.91×</td><td><strong>18.24</strong></td><td><strong>0.5891</strong></td><td><strong>0.2898</strong></td></tr></tbody></table></div><img src="assets/tradeoffs.webp" class="paper-figure" style="max-width:940px" width="2000" height="636" alt="Speed-quality comparisons between MORCA and SeaCache on Wan2.2"><p class="fig-caption">Speed–quality comparisons with SeaCache on Wan2.2. MORCA achieves better generation fidelity at comparable speedups.</p><h3 class="results-subtitle">Qualitative Comparisons</h3><img src="assets/qualitative.webp" class="paper-figure" style="max-width:940px" width="2400" height="1023" alt="Qualitative comparisons of MORCA and caching baselines on Wan2.1 and Wan2.2"><p class="fig-caption">Qualitative comparison with baselines. Differences are highlighted in the boxed regions.</p><div class="video-comparisons">
-<article class="video-comparison" aria-labelledby="video-example-1"><h3 id="video-example-1">Wan2.2 · 1.8× target</h3><p class="video-prompt"><strong>Prompt:</strong> In a still frame, amidst the hushed ambiance of the traditional tea room, a meticulously arranged tea set awaited, with porcelain cups, a bamboo whisk</p><div class="video-toolbar"><button type="button" data-action="play">Play all</button><button type="button" data-action="pause">Pause all</button><button type="button" data-action="restart">Replay all</button><span class="video-status" role="status" aria-live="polite"></span></div><div class="video-grid">
-<figure class="video-card"><figcaption>Original</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 1.8× target — Original — example 1"><source src="assets/videos/fig04_sample01_wan22_1p8x_original.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample01_wan22_1p8x_original.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>TeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 1.8× target — TeaCache — example 1"><source src="assets/videos/fig04_sample01_wan22_1p8x_teacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample01_wan22_1p8x_teacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>MagCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 1.8× target — MagCache — example 1"><source src="assets/videos/fig04_sample01_wan22_1p8x_magcache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample01_wan22_1p8x_magcache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>DiCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 1.8× target — DiCache — example 1"><source src="assets/videos/fig04_sample01_wan22_1p8x_dicache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample01_wan22_1p8x_dicache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>SeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 1.8× target — SeaCache — example 1"><source src="assets/videos/fig04_sample01_wan22_1p8x_seacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample01_wan22_1p8x_seacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card ours"><figcaption>MORCA (Ours)</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 1.8× target — MORCA (Ours) — example 1"><source src="assets/videos/fig04_sample01_wan22_1p8x_ours.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample01_wan22_1p8x_ours.mp4">Download video</a>.</video></figure>
-</div></article>
-<article class="video-comparison" aria-labelledby="video-example-2"><h3 id="video-example-2">Wan2.2 · 3.0× target</h3><p class="video-prompt"><strong>Prompt:</strong> a yellow bird</p><div class="video-toolbar"><button type="button" data-action="play">Play all</button><button type="button" data-action="pause">Pause all</button><button type="button" data-action="restart">Replay all</button><span class="video-status" role="status" aria-live="polite"></span></div><div class="video-grid">
-<figure class="video-card"><figcaption>Original</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 3.0× target — Original — example 2"><source src="assets/videos/fig04_sample02_wan22_3p0x_original.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample02_wan22_3p0x_original.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>TeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 3.0× target — TeaCache — example 2"><source src="assets/videos/fig04_sample02_wan22_3p0x_teacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample02_wan22_3p0x_teacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>MagCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 3.0× target — MagCache — example 2"><source src="assets/videos/fig04_sample02_wan22_3p0x_magcache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample02_wan22_3p0x_magcache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>DiCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 3.0× target — DiCache — example 2"><source src="assets/videos/fig04_sample02_wan22_3p0x_dicache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample02_wan22_3p0x_dicache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>SeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 3.0× target — SeaCache — example 2"><source src="assets/videos/fig04_sample02_wan22_3p0x_seacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample02_wan22_3p0x_seacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card ours"><figcaption>MORCA (Ours)</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.2 · 3.0× target — MORCA (Ours) — example 2"><source src="assets/videos/fig04_sample02_wan22_3p0x_ours.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample02_wan22_3p0x_ours.mp4">Download video</a>.</video></figure>
-</div></article>
-<article class="video-comparison" aria-labelledby="video-example-3"><h3 id="video-example-3">Wan2.1 · 2.4× target</h3><p class="video-prompt"><strong>Prompt:</strong> A person is grooming dog</p><div class="video-toolbar"><button type="button" data-action="play">Play all</button><button type="button" data-action="pause">Pause all</button><button type="button" data-action="restart">Replay all</button><span class="video-status" role="status" aria-live="polite"></span></div><div class="video-grid">
-<figure class="video-card"><figcaption>Original</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 2.4× target — Original — example 3"><source src="assets/videos/fig04_sample03_wan21_2p4x_original.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample03_wan21_2p4x_original.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>TeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 2.4× target — TeaCache — example 3"><source src="assets/videos/fig04_sample03_wan21_2p4x_teacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample03_wan21_2p4x_teacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>MagCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 2.4× target — MagCache — example 3"><source src="assets/videos/fig04_sample03_wan21_2p4x_magcache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample03_wan21_2p4x_magcache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>DiCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 2.4× target — DiCache — example 3"><source src="assets/videos/fig04_sample03_wan21_2p4x_dicache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample03_wan21_2p4x_dicache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>SeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 2.4× target — SeaCache — example 3"><source src="assets/videos/fig04_sample03_wan21_2p4x_seacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample03_wan21_2p4x_seacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card ours"><figcaption>MORCA (Ours)</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 2.4× target — MORCA (Ours) — example 3"><source src="assets/videos/fig04_sample03_wan21_2p4x_ours.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample03_wan21_2p4x_ours.mp4">Download video</a>.</video></figure>
-</div></article>
-<article class="video-comparison" aria-labelledby="video-example-4"><h3 id="video-example-4">Wan2.1 · 4.0× target</h3><p class="video-prompt"><strong>Prompt:</strong> a banana on the bottom of an apple, front view</p><div class="video-toolbar"><button type="button" data-action="play">Play all</button><button type="button" data-action="pause">Pause all</button><button type="button" data-action="restart">Replay all</button><span class="video-status" role="status" aria-live="polite"></span></div><div class="video-grid">
-<figure class="video-card"><figcaption>Original</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 4.0× target — Original — example 4"><source src="assets/videos/fig04_sample04_wan21_4p0x_original.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample04_wan21_4p0x_original.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>TeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 4.0× target — TeaCache — example 4"><source src="assets/videos/fig04_sample04_wan21_4p0x_teacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample04_wan21_4p0x_teacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>MagCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 4.0× target — MagCache — example 4"><source src="assets/videos/fig04_sample04_wan21_4p0x_magcache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample04_wan21_4p0x_magcache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>DiCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 4.0× target — DiCache — example 4"><source src="assets/videos/fig04_sample04_wan21_4p0x_dicache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample04_wan21_4p0x_dicache.mp4">Download video</a>.</video></figure>
-<figure class="video-card"><figcaption>SeaCache</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 4.0× target — SeaCache — example 4"><source src="assets/videos/fig04_sample04_wan21_4p0x_seacache.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample04_wan21_4p0x_seacache.mp4">Download video</a>.</video></figure>
-<figure class="video-card ours"><figcaption>MORCA (Ours)</figcaption><video controls muted playsinline preload="metadata" width="832" height="480" aria-label="Wan2.1 · 4.0× target — MORCA (Ours) — example 4"><source src="assets/videos/fig04_sample04_wan21_4p0x_ours.mp4" type="video/mp4">Your browser does not support embedded video. <a href="assets/videos/fig04_sample04_wan21_4p0x_ours.mp4">Download video</a>.</video></figure>
-</div></article>
-</div>
-</div></section>
-<footer><p>MORCA: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</p></footer><script src="videos.js" defer></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111f23">
+  <title>MORCA: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</title>
+  <meta name="description" content="MORCA learns when to reuse cached computation in video diffusion. Explore the method, benchmarks, and matched video comparisons on Wan2.2, Wan2.1, and CogVideoX.">
+  <link rel="canonical" href="https://x10ngyx.github.io/MORCA/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MORCA · Adaptive Cache Reuse in Video Diffusion">
+  <meta property="og:description" content="A latent-aware scheduler for video diffusion, with results and playable comparisons across three models.">
+  <meta property="og:image" content="https://x10ngyx.github.io/MORCA/assets/cover.webp">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23111f23'/%3E%3Cpath d='M9 34V14l15 15 15-15v20' stroke='%23e0b980' stroke-width='5' fill='none'/%3E%3C/svg%3E">
+  <link rel="preload" href="assets/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=20261120">
+  <script defer src="videos.js?v=20261120"></script>
+</head>
+<body>
+  <a class="skip-link" href="#videos">Skip to the comparisons</a>
+  <header class="cover" id="top">
+    <div class="cover-art" aria-hidden="true">
+      <picture>
+        <source media="(max-width: 640px)" srcset="assets/cover-mobile.webp">
+        <img src="assets/cover.webp" width="1566" height="862" fetchpriority="high" alt="">
+      </picture>
+      <video id="cover-video" muted playsinline loop preload="none" data-src="assets/cover.mp4" data-mobile-src="assets/cover-mobile.mp4" tabindex="-1"></video>
+    </div>
+    <div class="shell masthead">
+      <a class="wordmark" href="#top" aria-label="MORCA home"><span class="mark" aria-hidden="true"></span>MORCA</a>
+      <nav aria-label="Project navigation">
+        <a href="#videos">Videos</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+      </nav>
+    </div>
+    <div class="cover-center shell">
+      <p class="models-line">Wan2.2 <span>/</span> Wan2.1 <span>/</span> CogVideoX</p>
+      <h1>MOR<span>CA</span><span class="sr-only">: Offline-to-Online Reinforcement Learning for Adaptive Cache Reuse in Video Diffusion Acceleration</span></h1>
+      <p class="paper-title" aria-hidden="true">Offline-to-Online Reinforcement Learning<br class="wide-break"> for Adaptive Cache Reuse in Video Diffusion Acceleration</p>
+      <div class="resources">
+        <a class="button primary" href="#videos"><span class="play-glyph" aria-hidden="true"></span>Compare videos</a>
+        <a class="button secondary" href="https://arxiv.org/abs/2610.10457">arXiv preprint</a>
+        <a class="button secondary" href="https://github.com/x10ngyx/MORCA">Code</a>
+      </div>
+    </div>
+    <div class="shell credits">
+      <div class="authors" aria-label="Authors">
+        <span>Yuxiang Xiong<sup>1*</sup></span><span>Ruiyan Wang<sup>1*</sup></span><span>Wenqiang Wang<sup>2*</sup></span><span>Teng Hu<sup>1‡</sup></span>
+        <span>Songhang Shen<sup>1</sup></span><span>Bohao Feng<sup>3</sup></span><span>Hongqian Deng<sup>2</sup></span><span>Ran Yi<sup>1†</sup></span>
+      </div>
+      <div class="affiliations">
+        <span><sup>1</sup> Shanghai Jiao Tong University</span>
+        <span><sup>2</sup> Alibaba Cloud Computing</span>
+        <span><sup>3</sup> Alibaba Token Hub, Alibaba Group</span>
+      </div>
+      <p class="roles"><span>* Equal contribution</span><span>‡ Project leader</span><span>† Corresponding author</span></p>
+    </div>
+    <button id="cover-toggle" class="cover-toggle" type="button" hidden aria-label="Pause cover video" title="Pause cover video"><span class="pause-glyph" aria-hidden="true"></span></button>
+  </header>
+
+  <main>
+    <section id="videos" class="section dark">
+      <div class="shell">
+        <div class="section-heading">
+          <h2>Video <em>comparisons.</em></h2>
+          <p>Explore 24 examples. Each group shows the same prompt across methods, alongside the original uncached video.</p>
+        </div>
+        <details class="annotated">
+          <summary>Annotated frames from the paper</summary>
+          <figure class="paper-figure">
+            <a class="figure-link" href="assets/qualitative.webp?v=20261120" aria-label="Open full-size figure. Frame comparisons at the 2.4× target on Wan2.2, Wan2.1, and CogVideoX. Colored boxes mark the regions compared.">
+              <img src="assets/qualitative.webp?v=20261120" width="3200" height="1088" loading="lazy" decoding="async" alt="Frame comparisons at the 2.4× target on Wan2.2, Wan2.1, and CogVideoX. Colored boxes mark the regions compared.">
+            </a>
+            <figcaption>The cow and elephant and the cup illustrate changes in composition. The dog-grooming example shows differences in fine detail.</figcaption>
+          </figure>
+        </details>
+        <div class="gallery-tools" id="gallery-tools" hidden>
+          <label class="field"><span>Model</span><span class="select-wrap"><select id="model-select"><option>Wan2.2</option><option>Wan2.1</option><option>CogVideoX</option></select></span></label>
+          <label class="field"><span>Example</span><span class="select-wrap"><select id="example-select"></select></span></label>
+          <div class="play-tools">
+            <button type="button" class="button primary" id="group-play"><span class="play-glyph" aria-hidden="true"></span><span class="action-text">Play together</span></button>
+            <button type="button" class="button secondary" id="group-replay">Replay</button>
+          </div>
+        </div>
+        <div class="case-heading">
+          <div>
+            <p class="case-context" id="case-context">Wan2.2 · 2.4× target · Main comparison</p>
+            <h3 class="prompt" id="case-prompt">“a cow and an elephant”</h3>
+          </div>
+          <p id="play-status" class="status" role="status"></p>
+        </div>
+        <div class="clip-grid" id="clip-grid" aria-labelledby="case-prompt">
+          <figure class="clip">
+            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/original.mp4" poster="assets/clips/cow-and-elephant/original.webp" aria-label="Original, Cow and elephant"></video>
+            <figcaption>Original<small>No cache</small></figcaption>
+          </figure>
+          <figure class="clip ours">
+            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/morca.mp4" poster="assets/clips/cow-and-elephant/morca.webp" aria-label="MORCA, Cow and elephant"></video>
+            <figcaption>MORCA</figcaption>
+          </figure>
+          <figure class="clip">
+            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/seacache.mp4" poster="assets/clips/cow-and-elephant/seacache.webp" aria-label="SeaCache, Cow and elephant"></video>
+            <figcaption>SeaCache</figcaption>
+          </figure>
+          <figure class="clip">
+            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/teacache.mp4" poster="assets/clips/cow-and-elephant/teacache.webp" aria-label="TeaCache, Cow and elephant"></video>
+            <figcaption>TeaCache</figcaption>
+          </figure>
+          <figure class="clip">
+            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/magcache.mp4" poster="assets/clips/cow-and-elephant/magcache.webp" aria-label="MagCache, Cow and elephant"></video>
+            <figcaption>MagCache</figcaption>
+          </figure>
+          <figure class="clip">
+            <video controls muted playsinline preload="none" width="832" height="480" src="assets/clips/cow-and-elephant/dicache.mp4" poster="assets/clips/cow-and-elephant/dicache.webp" aria-label="DiCache, Cow and elephant"></video>
+            <figcaption>DiCache</figcaption>
+          </figure>
+        </div>
+        <noscript>
+          <details class="annotated"><summary>Browse all comparison videos</summary>
+            <ul class="file-list">
+              <li><strong>Wan2.2 · Cow and elephant · 2.4×</strong>
+<a href="assets/clips/cow-and-elephant/original.mp4">Original</a> <a href="assets/clips/cow-and-elephant/morca.mp4">MORCA</a> <a href="assets/clips/cow-and-elephant/seacache.mp4">SeaCache</a> <a href="assets/clips/cow-and-elephant/teacache.mp4">TeaCache</a> <a href="assets/clips/cow-and-elephant/magcache.mp4">MagCache</a> <a href="assets/clips/cow-and-elephant/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Dog grooming · 2.4×</strong>
+<a href="assets/clips/dog-grooming/original.mp4">Original</a> <a href="assets/clips/dog-grooming/morca.mp4">MORCA</a> <a href="assets/clips/dog-grooming/seacache.mp4">SeaCache</a> <a href="assets/clips/dog-grooming/teacache.mp4">TeaCache</a> <a href="assets/clips/dog-grooming/magcache.mp4">MagCache</a> <a href="assets/clips/dog-grooming/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Coffee cup · 2.4×</strong>
+<a href="assets/clips/coffee-cup/original.mp4">Original</a> <a href="assets/clips/coffee-cup/morca.mp4">MORCA</a> <a href="assets/clips/coffee-cup/seacache.mp4">SeaCache</a> <a href="assets/clips/coffee-cup/teacache.mp4">TeaCache</a> <a href="assets/clips/coffee-cup/magcache.mp4">MagCache</a> <a href="assets/clips/coffee-cup/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Astronaut in slow motion · 2.4×</strong>
+<a href="assets/clips/astronaut-in-slow-motion/original.mp4">Original</a> <a href="assets/clips/astronaut-in-slow-motion/seacache.mp4">SeaCache</a> <a href="assets/clips/astronaut-in-slow-motion/fixed.mp4">A: Fixed</a> <a href="assets/clips/astronaut-in-slow-motion/step-error.mp4">B: +Step error</a> <a href="assets/clips/astronaut-in-slow-motion/morca.mp4">C: MORCA</a>               </li>
+              <li><strong>Wan2.2 · Motorcycle coming to a stop · 1.8×</strong>
+<a href="assets/clips/motorcycle/original.mp4">Original</a> <a href="assets/clips/motorcycle/morca.mp4">MORCA</a> <a href="assets/clips/motorcycle/seacache.mp4">SeaCache</a>               </li>
+              <li><strong>Wan2.2 · Hair drier and toothbrush · 3.0×</strong>
+<a href="assets/clips/hair-drier/original.mp4">Original</a> <a href="assets/clips/hair-drier/morca.mp4">MORCA</a> <a href="assets/clips/hair-drier/seacache.mp4">SeaCache</a>               </li>
+              <li><strong>Wan2.2 · Pear still life · 1.8×</strong>
+<a href="assets/clips/still-life-pear/original.mp4">Original</a> <a href="assets/clips/still-life-pear/morca.mp4">MORCA</a> <a href="assets/clips/still-life-pear/seacache.mp4">SeaCache</a> <a href="assets/clips/still-life-pear/teacache.mp4">TeaCache</a> <a href="assets/clips/still-life-pear/magcache.mp4">MagCache</a> <a href="assets/clips/still-life-pear/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.2 · Suitcase and vase · 1.8×</strong>
+<a href="assets/clips/suitcase-and-vase/original.mp4">Original</a> <a href="assets/clips/suitcase-and-vase/morca.mp4">MORCA</a> <a href="assets/clips/suitcase-and-vase/seacache.mp4">SeaCache</a> <a href="assets/clips/suitcase-and-vase/teacache.mp4">TeaCache</a> <a href="assets/clips/suitcase-and-vase/magcache.mp4">MagCache</a> <a href="assets/clips/suitcase-and-vase/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.2 · Orange chair · 2.4×</strong>
+<a href="assets/clips/orange-chair/original.mp4">Original</a> <a href="assets/clips/orange-chair/morca.mp4">MORCA</a> <a href="assets/clips/orange-chair/seacache.mp4">SeaCache</a> <a href="assets/clips/orange-chair/teacache.mp4">TeaCache</a> <a href="assets/clips/orange-chair/magcache.mp4">MagCache</a> <a href="assets/clips/orange-chair/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.2 · Bicycle and car · 2.4×</strong>
+<a href="assets/clips/bicycle-and-car/original.mp4">Original</a> <a href="assets/clips/bicycle-and-car/morca.mp4">MORCA</a> <a href="assets/clips/bicycle-and-car/seacache.mp4">SeaCache</a> <a href="assets/clips/bicycle-and-car/teacache.mp4">TeaCache</a> <a href="assets/clips/bicycle-and-car/magcache.mp4">MagCache</a> <a href="assets/clips/bicycle-and-car/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.2 · Corgi at sunset · 3.0×</strong>
+<a href="assets/clips/corgi-at-sunset/original.mp4">Original</a> <a href="assets/clips/corgi-at-sunset/morca.mp4">MORCA</a> <a href="assets/clips/corgi-at-sunset/seacache.mp4">SeaCache</a> <a href="assets/clips/corgi-at-sunset/teacache.mp4">TeaCache</a> <a href="assets/clips/corgi-at-sunset/magcache.mp4">MagCache</a> <a href="assets/clips/corgi-at-sunset/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.2 · Banana and apple · 3.0×</strong>
+<a href="assets/clips/banana-and-apple/original.mp4">Original</a> <a href="assets/clips/banana-and-apple/morca.mp4">MORCA</a> <a href="assets/clips/banana-and-apple/seacache.mp4">SeaCache</a> <a href="assets/clips/banana-and-apple/teacache.mp4">TeaCache</a> <a href="assets/clips/banana-and-apple/magcache.mp4">MagCache</a> <a href="assets/clips/banana-and-apple/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Cyberpunk astronaut · 2.4×</strong>
+<a href="assets/clips/cyberpunk-astronaut/original.mp4">Original</a> <a href="assets/clips/cyberpunk-astronaut/morca.mp4">MORCA</a> <a href="assets/clips/cyberpunk-astronaut/seacache.mp4">SeaCache</a> <a href="assets/clips/cyberpunk-astronaut/teacache.mp4">TeaCache</a> <a href="assets/clips/cyberpunk-astronaut/magcache.mp4">MagCache</a> <a href="assets/clips/cyberpunk-astronaut/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Leg massage · 2.4×</strong>
+<a href="assets/clips/leg-massage/original.mp4">Original</a> <a href="assets/clips/leg-massage/morca.mp4">MORCA</a> <a href="assets/clips/leg-massage/seacache.mp4">SeaCache</a> <a href="assets/clips/leg-massage/teacache.mp4">TeaCache</a> <a href="assets/clips/leg-massage/magcache.mp4">MagCache</a> <a href="assets/clips/leg-massage/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Tennis racket and bottle · 3.0×</strong>
+<a href="assets/clips/tennis-racket/original.mp4">Original</a> <a href="assets/clips/tennis-racket/morca.mp4">MORCA</a> <a href="assets/clips/tennis-racket/seacache.mp4">SeaCache</a> <a href="assets/clips/tennis-racket/teacache.mp4">TeaCache</a> <a href="assets/clips/tennis-racket/magcache.mp4">MagCache</a> <a href="assets/clips/tennis-racket/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Strumming a guitar · 3.0×</strong>
+<a href="assets/clips/guitar/original.mp4">Original</a> <a href="assets/clips/guitar/morca.mp4">MORCA</a> <a href="assets/clips/guitar/seacache.mp4">SeaCache</a> <a href="assets/clips/guitar/teacache.mp4">TeaCache</a> <a href="assets/clips/guitar/magcache.mp4">MagCache</a> <a href="assets/clips/guitar/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Keyboard · 4.0×</strong>
+<a href="assets/clips/keyboard/original.mp4">Original</a> <a href="assets/clips/keyboard/morca.mp4">MORCA</a> <a href="assets/clips/keyboard/seacache.mp4">SeaCache</a> <a href="assets/clips/keyboard/teacache.mp4">TeaCache</a> <a href="assets/clips/keyboard/magcache.mp4">MagCache</a> <a href="assets/clips/keyboard/dicache.mp4">DiCache</a>               </li>
+              <li><strong>Wan2.1 · Toaster and microwave · 4.0×</strong>
+<a href="assets/clips/toaster-and-microwave/original.mp4">Original</a> <a href="assets/clips/toaster-and-microwave/morca.mp4">MORCA</a> <a href="assets/clips/toaster-and-microwave/seacache.mp4">SeaCache</a> <a href="assets/clips/toaster-and-microwave/teacache.mp4">TeaCache</a> <a href="assets/clips/toaster-and-microwave/magcache.mp4">MagCache</a> <a href="assets/clips/toaster-and-microwave/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Petting an animal · 1.8×</strong>
+<a href="assets/clips/petting-an-animal/original.mp4">Original</a> <a href="assets/clips/petting-an-animal/morca.mp4">MORCA</a> <a href="assets/clips/petting-an-animal/seacache.mp4">SeaCache</a> <a href="assets/clips/petting-an-animal/teacache.mp4">TeaCache</a> <a href="assets/clips/petting-an-animal/magcache.mp4">MagCache</a> <a href="assets/clips/petting-an-animal/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Raccoon on stage · 1.8×</strong>
+<a href="assets/clips/raccoon-on-stage/original.mp4">Original</a> <a href="assets/clips/raccoon-on-stage/morca.mp4">MORCA</a> <a href="assets/clips/raccoon-on-stage/seacache.mp4">SeaCache</a> <a href="assets/clips/raccoon-on-stage/teacache.mp4">TeaCache</a> <a href="assets/clips/raccoon-on-stage/magcache.mp4">MagCache</a> <a href="assets/clips/raccoon-on-stage/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Yellow bird · 2.4×</strong>
+<a href="assets/clips/yellow-bird/original.mp4">Original</a> <a href="assets/clips/yellow-bird/morca.mp4">MORCA</a> <a href="assets/clips/yellow-bird/seacache.mp4">SeaCache</a> <a href="assets/clips/yellow-bird/teacache.mp4">TeaCache</a> <a href="assets/clips/yellow-bird/magcache.mp4">MagCache</a> <a href="assets/clips/yellow-bird/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Bedroom · 2.4×</strong>
+<a href="assets/clips/bedroom/original.mp4">Original</a> <a href="assets/clips/bedroom/morca.mp4">MORCA</a> <a href="assets/clips/bedroom/seacache.mp4">SeaCache</a> <a href="assets/clips/bedroom/teacache.mp4">TeaCache</a> <a href="assets/clips/bedroom/magcache.mp4">MagCache</a> <a href="assets/clips/bedroom/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Panda in a Paris café · 3.0×</strong>
+<a href="assets/clips/panda-in-paris/original.mp4">Original</a> <a href="assets/clips/panda-in-paris/morca.mp4">MORCA</a> <a href="assets/clips/panda-in-paris/seacache.mp4">SeaCache</a> <a href="assets/clips/panda-in-paris/teacache.mp4">TeaCache</a> <a href="assets/clips/panda-in-paris/magcache.mp4">MagCache</a> <a href="assets/clips/panda-in-paris/dicache.mp4">DiCache</a>               </li>
+              <li><strong>CogVideoX · Bathroom fixtures · 3.0×</strong>
+<a href="assets/clips/bathroom/original.mp4">Original</a> <a href="assets/clips/bathroom/morca.mp4">MORCA</a> <a href="assets/clips/bathroom/seacache.mp4">SeaCache</a> <a href="assets/clips/bathroom/teacache.mp4">TeaCache</a> <a href="assets/clips/bathroom/magcache.mp4">MagCache</a> <a href="assets/clips/bathroom/dicache.mp4">DiCache</a>               </li>
+            </ul>
+          </details>
+        </noscript>
+      </div>
+    </section>
+
+    <section id="method" class="section paper">
+      <div class="shell">
+        <div class="section-heading">
+          <h2>Method <em>overview.</em></h2>
+          <p>A target speedup determines how many denoising steps can reuse cached computation. MORCA learns where to use them.</p>
+        </div>
+        <figure class="paper-figure">
+            <a class="figure-link" href="assets/framework.webp?v=20261120" aria-label="Open full-size figure. MORCA framework showing the latent-aware and budget-constrained scheduler, offline training, online fine-tuning, and inference.">
+              <img src="assets/framework.webp?v=20261120" width="2600" height="1024" loading="lazy" decoding="async" alt="MORCA framework showing the latent-aware and budget-constrained scheduler, offline training, online fine-tuning, and inference.">
+            </a>
+            <figcaption>At each step, the scheduler either reuses a residual from an earlier timestep or recomputes the DiT blocks. It learns first from stored trajectories, then from new rollouts.</figcaption>
+          </figure>
+        <div id="abstract" class="abstract-row">
+          <h3>Abstract</h3>
+          <p>Diffusion Transformers (DiTs) have achieved remarkable performance in video synthesis, but their iterative denoising process suffers from high inference latency. Caching has emerged as an effective acceleration strategy by exploiting inter-step redundancy during denoising. Existing dynamic caching methods typically estimate the error that cache reuse would introduce at each denoising step (step error) to guide cache decisions, whereas our concern is how much fidelity loss cache reuse would cause in the final generated video (terminal error). We show that step error does not directly correspond to terminal error and latent information helps capture their relationship, thereby informing cache decisions. Moreover, these methods rely on threshold-based rules that do not provide precise speedup control, making it difficult to meet user-specified acceleration targets. <span class="abstract-highlight">To address these limitations, we introduce MORCA, a cache scheduling framework trained through offline-to-online reinforcement learning to make latent-aware reuse/recompute decisions under user-specified acceleration targets.</span> Extensive experiments on different video generation models across multiple speedup targets demonstrate that MORCA achieves better speed–fidelity trade-offs than state-of-the-art caching methods.</p>
+        </div>
+        <div class="subsection" id="motivation">
+          <div class="section-heading">
+            <h2>From step error to<br><em>terminal error.</em></h2>
+            <p>A small change at one denoising step can alter the composition or details of the finished video.</p>
+          </div>
+          <div class="split motivation">
+            <figure class="paper-figure">
+            <a class="figure-link" href="assets/motivation.webp?v=20261120" aria-label="Open full-size figure. The two Wan2.1 prompts have similar step-error curves and different final-video PSNR curves.">
+              <img src="assets/motivation.webp?v=20261120" width="1200" height="1054" loading="lazy" decoding="async" alt="The two Wan2.1 prompts have similar step-error curves and different final-video PSNR curves.">
+            </a>
+            <figcaption>One step reuses the previous residual while all other steps recompute. The top diagram shows the comparison and the lower panels show two Wan2.1 prompts.</figcaption>
+          </figure>
+            <div class="prose">
+              <h3>What does one cache decision cost?</h3>
+              <p>Step error measures the immediate difference between a cached and a recomputed residual. Terminal error measures the effect on the final video against a no-cache reference. On Wan2.1, two prompts with similar step-error curves can end up with different final-video fidelity.</p>
+              <p>Adding features from the current and previous latents improves the predictor’s estimate of final-video PSNR.</p>
+              <table class="compact prediction">
+                <caption>Terminal-error prediction on Wan2.1</caption>
+                <thead><tr><th scope="col">Predictor input</th><th scope="col">RMSE (dB) ↓</th><th scope="col">Spearman ↑</th></tr></thead>
+                <tbody>                  <tr><th scope="row">Step error</th><td>6.971</td><td>0.5288</td></tr>                  <tr><th scope="row">Step error + step index</th><td>4.421</td><td>0.7528</td></tr>                  <tr><th scope="row">Step error + latent</th><td>2.849</td><td>0.9357</td></tr>                  <tr><th scope="row">Step error + latent + step index</th><td>2.832</td><td>0.9361</td></tr>                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="subsection split scheduler">
+          <div class="prose">
+            <h3>Latent-aware, budget-constrained scheduling</h3>
+            <p>The LABC scheduler combines SeaCache’s step-error signals with features of the current, previous, and last recomputed latents. It uses this state to decide whether to reuse the cached residual at each step.</p>
+            <p>Calibration converts the requested speedup into an integer reuse budget. The scheduler tracks how many reuses it has spent and allows only actions that can still meet the budget by the final step.</p>
+            <h3>Offline-to-online optimization</h3>
+            <p>Offline implicit Q-learning (IQL) starts from trajectories generated with random schedules. Online fine-tuning then adds new policy rollouts to the replay data. The training reward is the final video’s capped PSNR relative to an uncached reference with the same prompt and seed.</p>
+          </div>
+          <figure class="paper-figure">
+            <a class="figure-link" href="assets/calibration.webp?v=20261120" aria-label="Open full-size figure. Reuse budget versus inference latency and speedup on Wan2.1.">
+              <img src="assets/calibration.webp?v=20261120" width="1400" height="674" loading="lazy" decoding="async" alt="Reuse budget versus inference latency and speedup on Wan2.1.">
+            </a>
+            <figcaption>Calibration on Wan2.1. Increasing the number of reuse steps reduces inference time. The fitted curve maps a speedup target to a reuse count.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="section results">
+      <div class="shell">
+        <div class="section-heading">
+          <h2>Benchmark <em>results.</em></h2>
+          <p>The paper compares five caching methods at a common 2.4× target using 50 denoising steps and 200 prompts from VBench.</p>
+        </div>
+        <div class="gains">
+          <div><strong>+1.86 <small>dB</small></strong><span>Wan2.2</span></div>
+          <div><strong>+1.05 <small>dB</small></strong><span>Wan2.1</span></div>
+          <div><strong>+2.82 <small>dB</small></strong><span>CogVideoX</span></div>
+        </div>
+        <p class="gains-note">PSNR gain over SeaCache at the 2.4× target.</p>
+        <div class="table-intro">
+          <h3>Fidelity at matched speedups</h3>
+          <p>PSNR and SSIM increase with fidelity to the uncached output. Lower LPIPS is better. Speedup is measured against each model’s original latency.</p>
+        </div>
+        <div class="table-scroll" role="region" aria-label="Main results at the 2.4× target" tabindex="0">
+          <table class="result-table">
+            <caption class="sr-only">Quantitative comparison at approximately 2.4× speedup</caption>
+            <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
+            <tbody>
+              <tr class="group-row"><th scope="rowgroup" colspan="6">Wan2.2 <span>Wan2.2-T2V-A14B</span></th></tr>
+<tr><th scope="row">Original</th><td>990.56</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">TeaCache</th><td>415.21</td><td>2.39×</td><td>15.31</td><td>0.5325</td><td>0.3658</td></tr>
+<tr><th scope="row">MagCache</th><td>417.22</td><td>2.37×</td><td>15.31</td><td>0.5185</td><td>0.3632</td></tr>
+<tr><th scope="row">DiCache</th><td>416.43</td><td>2.38×</td><td>16.51</td><td>0.5759</td><td>0.2923</td></tr>
+<tr><th scope="row">SeaCache</th><td>419.76</td><td>2.36×</td><td><u>17.38</u></td><td><u>0.6074</u></td><td><u>0.2840</u></td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>421.15</td><td>2.35×</td><td><strong>19.24</strong></td><td><strong>0.6516</strong></td><td><strong>0.2513</strong></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="group-row"><th scope="rowgroup" colspan="6">Wan2.1 <span>Wan2.1-T2V-1.3B</span></th></tr>
+<tr><th scope="row">Original</th><td>255.94</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">TeaCache</th><td>106.82</td><td>2.40×</td><td>20.12</td><td>0.7361</td><td>0.1596</td></tr>
+<tr><th scope="row">MagCache</th><td>107.54</td><td>2.38×</td><td>22.31</td><td>0.8075</td><td>0.1198</td></tr>
+<tr><th scope="row">DiCache</th><td>108.27</td><td>2.36×</td><td>22.28</td><td>0.8139</td><td><strong>0.0992</strong></td></tr>
+<tr><th scope="row">SeaCache</th><td>109.00</td><td>2.35×</td><td><u>22.86</u></td><td><u>0.8174</u></td><td>0.1131</td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>109.68</td><td>2.33×</td><td><strong>23.91</strong></td><td><strong>0.8279</strong></td><td><u>0.1073</u></td></tr>
+            </tbody>
+            <tbody>
+              <tr class="group-row"><th scope="rowgroup" colspan="6">CogVideoX <span>CogVideoX-2B</span></th></tr>
+<tr><th scope="row">Original</th><td>92.26</td><td>1.00×</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">TeaCache</th><td>39.31</td><td>2.35×</td><td>24.38</td><td>0.8366</td><td>0.1457</td></tr>
+<tr><th scope="row">MagCache</th><td>39.30</td><td>2.35×</td><td>26.67</td><td><u>0.8822</u></td><td>0.1073</td></tr>
+<tr><th scope="row">DiCache</th><td>38.16</td><td>2.42×</td><td>25.09</td><td>0.8636</td><td>0.1239</td></tr>
+<tr><th scope="row">SeaCache</th><td>38.43</td><td>2.40×</td><td><u>26.82</u></td><td>0.8808</td><td><u>0.1058</u></td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>38.56</td><td>2.39×</td><td><strong>29.64</strong></td><td><strong>0.9137</strong></td><td><strong>0.0744</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-key"><strong>Bold</strong> marks the best fidelity score. <u>Underlining</u> marks the runner-up. At 2.4×, DiCache has the lowest LPIPS on Wan2.1.</p>
+        <div class="details-list">
+          <details>
+            <summary>Results at other target speedups</summary>
+            <p>Wan2.2 and CogVideoX cover 1.8× to 3.0×. Wan2.1 covers 2.4× to 4.0×. At the 3.0× target on CogVideoX, MagCache leads all three fidelity metrics.</p>
+            <div class="table-scroll" role="region" aria-label="Additional Wan2.2 results" tabindex="0">
+              <table class="result-table">
+                <caption>Wan2.2</caption>
+                <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
+                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">1.8× target</th></tr>
+<tr><th scope="row">TeaCache</th><td>562.63</td><td>1.76×</td><td>17.04</td><td>0.5984</td><td>0.2882</td></tr>
+<tr><th scope="row">MagCache</th><td>544.78</td><td>1.82×</td><td>16.41</td><td>0.5662</td><td>0.3041</td></tr>
+<tr><th scope="row">DiCache</th><td>551.29</td><td>1.80×</td><td>18.51</td><td>0.6516</td><td>0.2232</td></tr>
+<tr><th scope="row">SeaCache</th><td>546.99</td><td>1.81×</td><td><u>19.91</u></td><td><u>0.7016</u></td><td><u>0.1888</u></td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>549.19</td><td>1.80×</td><td><strong>22.13</strong></td><td><strong>0.7507</strong></td><td><strong>0.1681</strong></td></tr>
+                </tbody>
+                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">3.0× target</th></tr>
+<tr><th scope="row">TeaCache</th><td>322.88</td><td>3.07×</td><td>14.40</td><td>0.4913</td><td>0.4211</td></tr>
+<tr><th scope="row">MagCache</th><td>332.74</td><td>2.98×</td><td>13.41</td><td>0.4336</td><td>0.4839</td></tr>
+<tr><th scope="row">DiCache</th><td>340.50</td><td>2.91×</td><td><u>15.54</u></td><td><u>0.5259</u></td><td><u>0.3623</u></td></tr>
+<tr><th scope="row">SeaCache</th><td>320.41</td><td>3.09×</td><td>14.99</td><td>0.5151</td><td>0.3941</td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>326.93</td><td>3.03×</td><td><strong>16.77</strong></td><td><strong>0.5639</strong></td><td><strong>0.3435</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-scroll" role="region" aria-label="Additional Wan2.1 results" tabindex="0">
+              <table class="result-table">
+                <caption>Wan2.1</caption>
+                <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
+                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">3.0× target</th></tr>
+<tr><th scope="row">TeaCache</th><td>87.71</td><td>2.92×</td><td>17.39</td><td>0.6199</td><td>0.2674</td></tr>
+<tr><th scope="row">MagCache</th><td>86.09</td><td>2.97×</td><td><u>20.04</u></td><td>0.6888</td><td>0.1910</td></tr>
+<tr><th scope="row">DiCache</th><td>86.82</td><td>2.95×</td><td>19.69</td><td><u>0.7170</u></td><td><u>0.1813</u></td></tr>
+<tr><th scope="row">SeaCache</th><td>84.66</td><td>3.02×</td><td>18.78</td><td>0.6710</td><td>0.2226</td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>84.98</td><td>3.01×</td><td><strong>20.95</strong></td><td><strong>0.7244</strong></td><td><strong>0.1745</strong></td></tr>
+                </tbody>
+                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">4.0× target</th></tr>
+<tr><th scope="row">TeaCache</th><td>64.16</td><td>3.99×</td><td>14.09</td><td>0.4625</td><td>0.4554</td></tr>
+<tr><th scope="row">MagCache</th><td>64.09</td><td>3.99×</td><td>17.03</td><td>0.4974</td><td>0.3917</td></tr>
+<tr><th scope="row">DiCache</th><td>64.24</td><td>3.98×</td><td>14.68</td><td>0.4611</td><td>0.4198</td></tr>
+<tr><th scope="row">SeaCache</th><td>64.91</td><td>3.94×</td><td><u>17.13</u></td><td><u>0.5840</u></td><td><u>0.3025</u></td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>65.49</td><td>3.91×</td><td><strong>18.24</strong></td><td><strong>0.5891</strong></td><td><strong>0.2898</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-scroll" role="region" aria-label="Additional CogVideoX results" tabindex="0">
+              <table class="result-table">
+                <caption>CogVideoX</caption>
+                <thead><tr><th scope="col">Method</th><th scope="col">Latency (s) ↓</th><th scope="col">Speedup ↑</th><th scope="col">PSNR (dB) ↑</th><th scope="col">SSIM ↑</th><th scope="col">LPIPS ↓</th></tr></thead>
+                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">1.8× target</th></tr>
+<tr><th scope="row">TeaCache</th><td>51.23</td><td>1.80×</td><td>30.12</td><td>0.9251</td><td>0.0638</td></tr>
+<tr><th scope="row">MagCache</th><td>51.22</td><td>1.80×</td><td>28.97</td><td>0.9138</td><td>0.0750</td></tr>
+<tr><th scope="row">DiCache</th><td>50.59</td><td>1.82×</td><td>28.23</td><td>0.9092</td><td>0.0781</td></tr>
+<tr><th scope="row">SeaCache</th><td>50.48</td><td>1.83×</td><td><u>35.49</u></td><td><u>0.9636</u></td><td><u>0.0271</u></td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>50.89</td><td>1.81×</td><td><strong>36.78</strong></td><td><strong>0.9690</strong></td><td><strong>0.0203</strong></td></tr>
+                </tbody>
+                <tbody><tr class="group-row"><th colspan="6" scope="rowgroup">3.0× target</th></tr>
+<tr><th scope="row">TeaCache</th><td>30.87</td><td>2.99×</td><td>21.43</td><td>0.7741</td><td>0.2202</td></tr>
+<tr><th scope="row">MagCache</th><td>30.87</td><td>2.99×</td><td><strong>24.76</strong></td><td><strong>0.8431</strong></td><td><strong>0.1508</strong></td></tr>
+<tr><th scope="row">DiCache</th><td>30.29</td><td>3.05×</td><td>22.26</td><td>0.7965</td><td>0.1995</td></tr>
+<tr><th scope="row">SeaCache</th><td>31.00</td><td>2.98×</td><td>23.26</td><td>0.8135</td><td><u>0.1742</u></td></tr>
+<tr class="method-row"><th scope="row">MORCA</th><td>31.00</td><td>2.98×</td><td><u>23.95</u></td><td><u>0.8159</u></td><td>0.1847</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="split figure-note">
+              <figure class="paper-figure">
+            <a class="figure-link" href="assets/tradeoffs.webp?v=20261120" aria-label="Open full-size figure. PSNR, SSIM, and LPIPS versus measured speedup for MORCA and SeaCache on Wan2.2.">
+              <img src="assets/tradeoffs.webp?v=20261120" width="1000" height="1305" loading="lazy" decoding="async" alt="PSNR, SSIM, and LPIPS versus measured speedup for MORCA and SeaCache on Wan2.2.">
+            </a>
+            <figcaption>Wan2.2 speed–fidelity curves on a 50-prompt subset, across nine targets from 1.5× to 3.5×.</figcaption>
+          </figure>
+              <div class="prose"><h3>Between the benchmark targets</h3><p>MORCA improves all three fidelity metrics over SeaCache across the sampled speedups on Wan2.2. The separation is most pronounced in the middle of the range.</p></div>
+            </div>
+          </details>
+          <details>
+            <summary>Cache schedules and training</summary>
+            <div class="split figure-note">
+              <figure class="paper-figure">
+            <a class="figure-link" href="assets/schedules.webp?v=20261120" aria-label="Open full-size figure. Four cache schedules for one CogVideoX astronaut prompt, with original video frames above the traces.">
+              <img src="assets/schedules.webp?v=20261120" width="1500" height="860" loading="lazy" decoding="async" alt="Four cache schedules for one CogVideoX astronaut prompt, with original video frames above the traces.">
+            </a>
+            <figcaption>A CogVideoX example at a 2.4× target. The traces show where each schedule recomputes or reuses a residual.</figcaption>
+          </figure>
+              <div class="prose"><h3>Different placements, one budget</h3><p>The example compares SeaCache, a fixed learned schedule (A), a scheduler with step-error signals (B), and MORCA with latent features (C). Each trace has 18 recomputations and 32 reuses.</p>
+                <a href="#videos" data-example="astronaut-in-slow-motion">Watch the scheduling example</a>
+                <h3>Training on Wan2.1</h3><p>With 4,000 offline trajectories and 1,600 additional trajectories, the paper reports 20.95 dB after online fine-tuning, compared with 20.29 dB for offline-only training. Both reach 3.01× speedup.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>VBench and human preferences</summary>
+            <div class="split figure-note">
+              <div class="prose">
+                <h3>CogVideoX at the 2.4× target</h3>
+                <p>VBench assesses visual and semantic quality. The uncached reference scores 77.44 overall, SeaCache scores 77.17, and MORCA scores 76.83.</p>
+                <table class="compact"><caption>VBench scores (%) ↑</caption>
+                  <thead><tr><th scope="col">Method</th><th scope="col">Quality</th><th scope="col">Semantic</th><th scope="col">Total</th></tr></thead>
+                  <tbody>                    <tr><th scope="row">Original</th><td>80.35</td><td>65.80</td><td>77.44</td></tr>                    <tr><th scope="row">TeaCache</th><td><strong>79.93</strong></td><td>65.99</td><td><u>77.14</u></td></tr>                    <tr><th scope="row">MagCache</th><td>79.71</td><td><u>66.53</u></td><td>77.07</td></tr>                    <tr><th scope="row">DiCache</th><td><u>79.88</u></td><td>64.83</td><td>76.87</td></tr>                    <tr><th scope="row">SeaCache</th><td>79.73</td><td><strong>66.90</strong></td><td><strong>77.17</strong></td></tr>                    <tr><th scope="row">MORCA</th><td>79.55</td><td>65.95</td><td>76.83</td></tr>                  </tbody>
+                </table>
+              </div>
+              <figure class="paper-figure">
+            <a class="figure-link" href="assets/user-study.webp?v=20261120" aria-label="Open full-size figure. Human preference on Wan2.2 for perceptual quality and fidelity to the reference.">
+              <img src="assets/user-study.webp?v=20261120" width="1150" height="645" loading="lazy" decoding="async" alt="Human preference on Wan2.2 for perceptual quality and fidelity to the reference.">
+            </a>
+            <figcaption>Thirty participants judged Wan2.2 video pairs from 100 prompts. For fidelity to the reference, 74% of judgments favored MORCA, 9% favored SeaCache, and 17% were ties. For perceptual quality, 45% were ties.</figcaption>
+          </figure>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="shell footer-inner">
+      <a class="wordmark" href="#top" aria-label="MORCA, back to top"><span class="mark" aria-hidden="true"></span>MORCA</a>
+      <nav aria-label="Project resources"><a href="https://arxiv.org/abs/2610.10457">arXiv preprint</a><a href="https://github.com/x10ngyx/MORCA">Code</a><a href="#top">Back to top</a></nav>
+    </div>
+  </footer>
+  <script type="application/json" id="comparison-data">
+    [{"id":"cow-and-elephant","title":"Cow and elephant","model":"Wan2.2","target":"2.4×","prompt":"a cow and an elephant","figure":4,"sample":1,"clips":[{"method":"Original","path":"assets/clips/cow-and-elephant/original.mp4"},{"method":"MORCA","path":"assets/clips/cow-and-elephant/morca.mp4"},{"method":"SeaCache","path":"assets/clips/cow-and-elephant/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/cow-and-elephant/teacache.mp4"},{"method":"MagCache","path":"assets/clips/cow-and-elephant/magcache.mp4"},{"method":"DiCache","path":"assets/clips/cow-and-elephant/dicache.mp4"}],"width":832,"height":480},
+     {"id":"dog-grooming","title":"Dog grooming","model":"Wan2.1","target":"2.4×","prompt":"A person is grooming dog","figure":4,"sample":2,"clips":[{"method":"Original","path":"assets/clips/dog-grooming/original.mp4"},{"method":"MORCA","path":"assets/clips/dog-grooming/morca.mp4"},{"method":"SeaCache","path":"assets/clips/dog-grooming/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/dog-grooming/teacache.mp4"},{"method":"MagCache","path":"assets/clips/dog-grooming/magcache.mp4"},{"method":"DiCache","path":"assets/clips/dog-grooming/dicache.mp4"}],"width":832,"height":480},
+     {"id":"coffee-cup","title":"Coffee cup","model":"CogVideoX","target":"2.4×","prompt":"a cup","figure":4,"sample":3,"clips":[{"method":"Original","path":"assets/clips/coffee-cup/original.mp4"},{"method":"MORCA","path":"assets/clips/coffee-cup/morca.mp4"},{"method":"SeaCache","path":"assets/clips/coffee-cup/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/coffee-cup/teacache.mp4"},{"method":"MagCache","path":"assets/clips/coffee-cup/magcache.mp4"},{"method":"DiCache","path":"assets/clips/coffee-cup/dicache.mp4"}],"width":720,"height":480},
+     {"id":"astronaut-in-slow-motion","title":"Astronaut in slow motion","model":"CogVideoX","target":"2.4×","prompt":"An astronaut flying in space, in super slow motion","figure":5,"sample":1,"clips":[{"method":"Original","path":"assets/clips/astronaut-in-slow-motion/original.mp4"},{"method":"SeaCache","path":"assets/clips/astronaut-in-slow-motion/seacache.mp4"},{"method":"A: Fixed","path":"assets/clips/astronaut-in-slow-motion/fixed.mp4"},{"method":"B: +Step error","path":"assets/clips/astronaut-in-slow-motion/step-error.mp4"},{"method":"C: MORCA","path":"assets/clips/astronaut-in-slow-motion/morca.mp4"}],"width":720,"height":480},
+     {"id":"motorcycle","title":"Motorcycle coming to a stop","model":"Wan2.2","target":"1.8×","prompt":"a motorcycle slowing down to stop","figure":8,"sample":1,"clips":[{"method":"Original","path":"assets/clips/motorcycle/original.mp4"},{"method":"MORCA","path":"assets/clips/motorcycle/morca.mp4"},{"method":"SeaCache","path":"assets/clips/motorcycle/seacache.mp4"}],"width":832,"height":480},
+     {"id":"hair-drier","title":"Hair drier and toothbrush","model":"Wan2.2","target":"3.0×","prompt":"a hair drier on the right of a toothbrush, front view","figure":8,"sample":2,"clips":[{"method":"Original","path":"assets/clips/hair-drier/original.mp4"},{"method":"MORCA","path":"assets/clips/hair-drier/morca.mp4"},{"method":"SeaCache","path":"assets/clips/hair-drier/seacache.mp4"}],"width":832,"height":480},
+     {"id":"still-life-pear","title":"Pear still life","model":"Wan2.2","target":"1.8×","prompt":"In a still frame, a pear","figure":10,"sample":1,"clips":[{"method":"Original","path":"assets/clips/still-life-pear/original.mp4"},{"method":"MORCA","path":"assets/clips/still-life-pear/morca.mp4"},{"method":"SeaCache","path":"assets/clips/still-life-pear/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/still-life-pear/teacache.mp4"},{"method":"MagCache","path":"assets/clips/still-life-pear/magcache.mp4"},{"method":"DiCache","path":"assets/clips/still-life-pear/dicache.mp4"}],"width":832,"height":480},
+     {"id":"suitcase-and-vase","title":"Suitcase and vase","model":"Wan2.2","target":"1.8×","prompt":"a suitcase and a vase","figure":10,"sample":2,"clips":[{"method":"Original","path":"assets/clips/suitcase-and-vase/original.mp4"},{"method":"MORCA","path":"assets/clips/suitcase-and-vase/morca.mp4"},{"method":"SeaCache","path":"assets/clips/suitcase-and-vase/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/suitcase-and-vase/teacache.mp4"},{"method":"MagCache","path":"assets/clips/suitcase-and-vase/magcache.mp4"},{"method":"DiCache","path":"assets/clips/suitcase-and-vase/dicache.mp4"}],"width":832,"height":480},
+     {"id":"orange-chair","title":"Orange chair","model":"Wan2.2","target":"2.4×","prompt":"an orange chair","figure":10,"sample":3,"clips":[{"method":"Original","path":"assets/clips/orange-chair/original.mp4"},{"method":"MORCA","path":"assets/clips/orange-chair/morca.mp4"},{"method":"SeaCache","path":"assets/clips/orange-chair/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/orange-chair/teacache.mp4"},{"method":"MagCache","path":"assets/clips/orange-chair/magcache.mp4"},{"method":"DiCache","path":"assets/clips/orange-chair/dicache.mp4"}],"width":832,"height":480},
+     {"id":"bicycle-and-car","title":"Bicycle and car","model":"Wan2.2","target":"2.4×","prompt":"a bicycle and a car","figure":10,"sample":4,"clips":[{"method":"Original","path":"assets/clips/bicycle-and-car/original.mp4"},{"method":"MORCA","path":"assets/clips/bicycle-and-car/morca.mp4"},{"method":"SeaCache","path":"assets/clips/bicycle-and-car/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/bicycle-and-car/teacache.mp4"},{"method":"MagCache","path":"assets/clips/bicycle-and-car/magcache.mp4"},{"method":"DiCache","path":"assets/clips/bicycle-and-car/dicache.mp4"}],"width":832,"height":480},
+     {"id":"corgi-at-sunset","title":"Corgi at sunset","model":"Wan2.2","target":"3.0×","prompt":"A cute happy Corgi playing in park, sunset, in super slow motion","figure":11,"sample":1,"clips":[{"method":"Original","path":"assets/clips/corgi-at-sunset/original.mp4"},{"method":"MORCA","path":"assets/clips/corgi-at-sunset/morca.mp4"},{"method":"SeaCache","path":"assets/clips/corgi-at-sunset/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/corgi-at-sunset/teacache.mp4"},{"method":"MagCache","path":"assets/clips/corgi-at-sunset/magcache.mp4"},{"method":"DiCache","path":"assets/clips/corgi-at-sunset/dicache.mp4"}],"width":832,"height":480},
+     {"id":"banana-and-apple","title":"Banana and apple","model":"Wan2.2","target":"3.0×","prompt":"a banana on the bottom of an apple, front view","figure":11,"sample":2,"clips":[{"method":"Original","path":"assets/clips/banana-and-apple/original.mp4"},{"method":"MORCA","path":"assets/clips/banana-and-apple/morca.mp4"},{"method":"SeaCache","path":"assets/clips/banana-and-apple/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/banana-and-apple/teacache.mp4"},{"method":"MagCache","path":"assets/clips/banana-and-apple/magcache.mp4"},{"method":"DiCache","path":"assets/clips/banana-and-apple/dicache.mp4"}],"width":832,"height":480},
+     {"id":"cyberpunk-astronaut","title":"Cyberpunk astronaut","model":"Wan2.1","target":"2.4×","prompt":"An astronaut flying in space, in cyberpunk style","figure":11,"sample":3,"clips":[{"method":"Original","path":"assets/clips/cyberpunk-astronaut/original.mp4"},{"method":"MORCA","path":"assets/clips/cyberpunk-astronaut/morca.mp4"},{"method":"SeaCache","path":"assets/clips/cyberpunk-astronaut/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/cyberpunk-astronaut/teacache.mp4"},{"method":"MagCache","path":"assets/clips/cyberpunk-astronaut/magcache.mp4"},{"method":"DiCache","path":"assets/clips/cyberpunk-astronaut/dicache.mp4"}],"width":832,"height":480},
+     {"id":"leg-massage","title":"Leg massage","model":"Wan2.1","target":"2.4×","prompt":"A person is massaging legs","figure":11,"sample":4,"clips":[{"method":"Original","path":"assets/clips/leg-massage/original.mp4"},{"method":"MORCA","path":"assets/clips/leg-massage/morca.mp4"},{"method":"SeaCache","path":"assets/clips/leg-massage/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/leg-massage/teacache.mp4"},{"method":"MagCache","path":"assets/clips/leg-massage/magcache.mp4"},{"method":"DiCache","path":"assets/clips/leg-massage/dicache.mp4"}],"width":832,"height":480},
+     {"id":"tennis-racket","title":"Tennis racket and bottle","model":"Wan2.1","target":"3.0×","prompt":"a tennis racket and a bottle","figure":12,"sample":1,"clips":[{"method":"Original","path":"assets/clips/tennis-racket/original.mp4"},{"method":"MORCA","path":"assets/clips/tennis-racket/morca.mp4"},{"method":"SeaCache","path":"assets/clips/tennis-racket/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/tennis-racket/teacache.mp4"},{"method":"MagCache","path":"assets/clips/tennis-racket/magcache.mp4"},{"method":"DiCache","path":"assets/clips/tennis-racket/dicache.mp4"}],"width":832,"height":480},
+     {"id":"guitar","title":"Strumming a guitar","model":"Wan2.1","target":"3.0×","prompt":"A person is strumming guitar","figure":12,"sample":2,"clips":[{"method":"Original","path":"assets/clips/guitar/original.mp4"},{"method":"MORCA","path":"assets/clips/guitar/morca.mp4"},{"method":"SeaCache","path":"assets/clips/guitar/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/guitar/teacache.mp4"},{"method":"MagCache","path":"assets/clips/guitar/magcache.mp4"},{"method":"DiCache","path":"assets/clips/guitar/dicache.mp4"}],"width":832,"height":480},
+     {"id":"keyboard","title":"Keyboard","model":"Wan2.1","target":"4.0×","prompt":"a keyboard","figure":12,"sample":3,"clips":[{"method":"Original","path":"assets/clips/keyboard/original.mp4"},{"method":"MORCA","path":"assets/clips/keyboard/morca.mp4"},{"method":"SeaCache","path":"assets/clips/keyboard/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/keyboard/teacache.mp4"},{"method":"MagCache","path":"assets/clips/keyboard/magcache.mp4"},{"method":"DiCache","path":"assets/clips/keyboard/dicache.mp4"}],"width":832,"height":480},
+     {"id":"toaster-and-microwave","title":"Toaster and microwave","model":"Wan2.1","target":"4.0×","prompt":"a toaster on the bottom of a microwave, front view","figure":12,"sample":4,"clips":[{"method":"Original","path":"assets/clips/toaster-and-microwave/original.mp4"},{"method":"MORCA","path":"assets/clips/toaster-and-microwave/morca.mp4"},{"method":"SeaCache","path":"assets/clips/toaster-and-microwave/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/toaster-and-microwave/teacache.mp4"},{"method":"MagCache","path":"assets/clips/toaster-and-microwave/magcache.mp4"},{"method":"DiCache","path":"assets/clips/toaster-and-microwave/dicache.mp4"}],"width":832,"height":480},
+     {"id":"petting-an-animal","title":"Petting an animal","model":"CogVideoX","target":"1.8×","prompt":"A person is petting animal (not cat)","figure":13,"sample":1,"clips":[{"method":"Original","path":"assets/clips/petting-an-animal/original.mp4"},{"method":"MORCA","path":"assets/clips/petting-an-animal/morca.mp4"},{"method":"SeaCache","path":"assets/clips/petting-an-animal/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/petting-an-animal/teacache.mp4"},{"method":"MagCache","path":"assets/clips/petting-an-animal/magcache.mp4"},{"method":"DiCache","path":"assets/clips/petting-an-animal/dicache.mp4"}],"width":720,"height":480},
+     {"id":"raccoon-on-stage","title":"Raccoon on stage","model":"CogVideoX","target":"1.8×","prompt":"A raccoon dressed in suit playing the trumpet, stage background","figure":13,"sample":2,"clips":[{"method":"Original","path":"assets/clips/raccoon-on-stage/original.mp4"},{"method":"MORCA","path":"assets/clips/raccoon-on-stage/morca.mp4"},{"method":"SeaCache","path":"assets/clips/raccoon-on-stage/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/raccoon-on-stage/teacache.mp4"},{"method":"MagCache","path":"assets/clips/raccoon-on-stage/magcache.mp4"},{"method":"DiCache","path":"assets/clips/raccoon-on-stage/dicache.mp4"}],"width":720,"height":480},
+     {"id":"yellow-bird","title":"Yellow bird","model":"CogVideoX","target":"2.4×","prompt":"a yellow bird","figure":13,"sample":3,"clips":[{"method":"Original","path":"assets/clips/yellow-bird/original.mp4"},{"method":"MORCA","path":"assets/clips/yellow-bird/morca.mp4"},{"method":"SeaCache","path":"assets/clips/yellow-bird/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/yellow-bird/teacache.mp4"},{"method":"MagCache","path":"assets/clips/yellow-bird/magcache.mp4"},{"method":"DiCache","path":"assets/clips/yellow-bird/dicache.mp4"}],"width":720,"height":480},
+     {"id":"bedroom","title":"Bedroom","model":"CogVideoX","target":"2.4×","prompt":"a bed","figure":13,"sample":4,"clips":[{"method":"Original","path":"assets/clips/bedroom/original.mp4"},{"method":"MORCA","path":"assets/clips/bedroom/morca.mp4"},{"method":"SeaCache","path":"assets/clips/bedroom/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/bedroom/teacache.mp4"},{"method":"MagCache","path":"assets/clips/bedroom/magcache.mp4"},{"method":"DiCache","path":"assets/clips/bedroom/dicache.mp4"}],"width":720,"height":480},
+     {"id":"panda-in-paris","title":"Panda in a Paris café","model":"CogVideoX","target":"3.0×","prompt":"A panda drinking coffee in a cafe in Paris, oil painting","figure":14,"sample":1,"clips":[{"method":"Original","path":"assets/clips/panda-in-paris/original.mp4"},{"method":"MORCA","path":"assets/clips/panda-in-paris/morca.mp4"},{"method":"SeaCache","path":"assets/clips/panda-in-paris/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/panda-in-paris/teacache.mp4"},{"method":"MagCache","path":"assets/clips/panda-in-paris/magcache.mp4"},{"method":"DiCache","path":"assets/clips/panda-in-paris/dicache.mp4"}],"width":720,"height":480},
+     {"id":"bathroom","title":"Bathroom fixtures","model":"CogVideoX","target":"3.0×","prompt":"a toilet on the left of a hair drier, front view","figure":14,"sample":2,"clips":[{"method":"Original","path":"assets/clips/bathroom/original.mp4"},{"method":"MORCA","path":"assets/clips/bathroom/morca.mp4"},{"method":"SeaCache","path":"assets/clips/bathroom/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/bathroom/teacache.mp4"},{"method":"MagCache","path":"assets/clips/bathroom/magcache.mp4"},{"method":"DiCache","path":"assets/clips/bathroom/dicache.mp4"}],"width":720,"height":480}]
+  </script>
+</body>
+</html>
