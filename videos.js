@@ -1,7 +1,6 @@
 'use strict';
 
-// Bring moving content into view before starting its decoders. A tap or Space
-// pauses the film or the entire comparison without putting controls over frames.
+// Start comparison clips in view and toggle the group with a tap or Space.
 function followViewport(surface, setActive, isPaused, threshold = 0) {
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
   let visible = false;
@@ -80,48 +79,6 @@ function setupCover() {
     update();
   }).observe(cover);
   update();
-}
-
-function setupFilm() {
-  const film = document.querySelector('#project-film');
-  const player = film.closest('.film-player');
-  const sound = document.querySelector('#film-sound');
-  const captions = document.querySelector('#film-captions');
-  const position = document.querySelector('#film-position');
-  const fullscreen = document.querySelector('#film-fullscreen');
-  const track = film.querySelector('track').track;
-  track.mode = 'showing';
-
-  followViewport(film, active => {
-    if (active) film.play().catch(() => {}); // A tap can retry under a device's autoplay policy.
-    else film.pause();
-  }, () => film.paused, .25);
-  sound.addEventListener('click', () => { film.muted = !film.muted; });
-  film.addEventListener('volumechange', () => {
-    sound.textContent = film.muted ? 'Sound off' : 'Sound on';
-    sound.setAttribute('aria-pressed', String(!film.muted));
-  });
-  captions.addEventListener('click', () => {
-    track.mode = track.mode === 'showing' ? 'disabled' : 'showing';
-    captions.setAttribute('aria-pressed', String(track.mode === 'showing'));
-  });
-  film.addEventListener('loadedmetadata', () => { position.max = film.duration; });
-  film.addEventListener('timeupdate', () => { position.value = film.currentTime; });
-  position.addEventListener('input', () => {
-    if (Number.isFinite(film.duration)) film.currentTime = position.valueAsNumber;
-  });
-  if (player.requestFullscreen || film.webkitEnterFullscreen) {
-    fullscreen.hidden = false;
-    fullscreen.addEventListener('click', () => {
-      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-      else if (player.requestFullscreen) player.requestFullscreen().catch(() => {});
-      else film.webkitEnterFullscreen();
-    });
-    document.addEventListener('fullscreenchange', () => {
-      fullscreen.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen';
-    });
-  }
-  player.querySelector('.film-tools').hidden = false;
 }
 
 function waitForMedia(video, event, signal) {
@@ -405,5 +362,4 @@ function setupGallery() {
 }
 
 setupCover();
-setupFilm();
 setupGallery();
