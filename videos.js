@@ -42,23 +42,44 @@ function followViewport(surface, setActive, isPaused, threshold = 0) {
 
 function setupCover() {
   const video = document.querySelector('#cover-video');
-  const compact = matchMedia('(max-width: 640px)');
-  let active = false;
-  function update() {
-    const source = compact.matches ? video.dataset.mobileSrc : video.dataset.src;
-    if (source !== video.getAttribute('src')) {
-      video.classList.remove('ready');
-      if (active) video.src = source;
-    }
-    if (active) video.play().catch(() => {}); // The poster remains visible when autoplay is blocked.
-    else video.pause();
+  const cover = video.parentElement;
+  const mobileSource = video.querySelector('source[media]');
+  let visible = true;
+
+  function showAnimatedPoster() {
+    if (video.hidden) return;
+    const mobile = cover.querySelector('picture source');
+    const desktop = cover.querySelector('img');
+    mobile.srcset = mobile.dataset.loop;
+    desktop.src = desktop.dataset.loop;
+    video.hidden = true;
+    video.pause();
   }
-  video.addEventListener('playing', () => video.classList.add('ready'));
-  compact.addEventListener('change', update);
-  followViewport(video.parentElement, next => {
-    active = next && !navigator.connection?.saveData;
+
+  function update() {
+    if (video.hidden) return;
+    if (!visible || document.hidden) {
+      video.pause();
+      return;
+    }
+    video.play().catch(error => {
+      if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') showAnimatedPoster();
+    });
+  }
+
+  video.addEventListener('error', showAnimatedPoster);
+  video.lastElementChild.addEventListener('error', showAnimatedPoster);
+  matchMedia(mobileSource.media).addEventListener('change', () => {
+    if (video.hidden) return;
+    video.load();
     update();
   });
+  document.addEventListener('visibilitychange', update);
+  new IntersectionObserver(([entry]) => {
+    visible = entry.isIntersecting;
+    update();
+  }).observe(cover);
+  update();
 }
 
 function setupFilm() {

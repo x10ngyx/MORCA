@@ -73,8 +73,6 @@ button { color: inherit; }
   position: absolute; inset: 0;
   display: block; width: 100%; height: 100%; object-fit: cover;
 }
-.cover-art video { opacity: 0; }
-.cover-art video.ready { opacity: 1; }
 .masthead, .footer-inner {
   display: flex;
   align-items: center;
@@ -183,7 +181,10 @@ h2 em { font-family: var(--serif); font-weight: 400; letter-spacing: -.05em; col
 .dark h2 em { color: var(--mint); }
 .section-heading > p { max-width: 25rem; font-size: 1.03rem; line-height: 1.6; color: var(--muted); }
 .dark .section-heading > p { color: #c2d1d3; }
-.film-section .section-heading { margin-bottom: clamp(1.4rem, 2.5vw, 2.5rem); }
+.section.film-section { padding-block: clamp(2.25rem, 4.4vw, 4rem); }
+.film-section > .shell { width: min(82%, 60rem); }
+.film-section .section-heading { margin-bottom: clamp(1rem, 1.8vw, 1.5rem); }
+.film-section h2 { font-size: clamp(2.1rem, 3.7vw, 3.65rem); }
 .film-player { overflow: hidden; border-radius: .45rem; background: var(--night); color: var(--white); }
 #project-film, .static-film { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--night); }
 #project-film:focus-visible { outline-offset: -5px; }
@@ -201,7 +202,6 @@ h3 {
   letter-spacing: -.044em;
   line-height: 1.16;
 }
-.comparison-figure { margin-top: clamp(2rem, 4vw, 3.5rem); }
 .gallery-tools {
   display: grid;
   grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr);
@@ -316,6 +316,7 @@ footer { color: var(--white); background: var(--night); }
 }
 @media (max-width: 640px) {
   .shell { width: 91%; }
+  .film-section > .shell { width: 91%; }
   .cover-main { grid-template-columns: 1fr; gap: 1.5rem; padding-block: 2rem 1.4rem; }
   .cover-art { aspect-ratio: 832 / 480; }
   .masthead { min-height: 4.1rem; }
@@ -346,8 +347,8 @@ footer { color: var(--white); background: var(--night); }
 }
 @media (max-width: 380px) {
   .masthead { gap: .4rem; }
-  .masthead .wordmark { gap: .4rem; font-size: 1.08rem; }
-  .masthead nav { gap: .6rem; }
+  .masthead .wordmark { gap: .2rem; font-size: 1.08rem; }
+  .masthead nav { gap: .36rem; }
   .results .shell { width: calc(100% - 1rem); }
   .benchmark-table { font-size: .8rem; }
   .benchmark-table thead th { font-size: .76rem; }
