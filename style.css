@@ -79,7 +79,7 @@ button { color: inherit; }
   justify-content: space-between;
   gap: 1rem;
 }
-.masthead { min-height: 5rem; border-bottom: 1px solid var(--dark-line); }
+.masthead { min-height: 5rem; justify-content: flex-end; border-bottom: 1px solid var(--dark-line); }
 .wordmark, .masthead nav, .footer-inner nav { display: flex; align-items: center; }
 .wordmark {
   gap: .8rem;
@@ -346,8 +346,6 @@ footer { color: var(--white); background: var(--night); }
   .footer-inner { flex-wrap: wrap; padding-block: 1.2rem; gap: .2rem 1rem; }
 }
 @media (max-width: 380px) {
-  .masthead { gap: .4rem; }
-  .masthead .wordmark { gap: .2rem; font-size: 1.08rem; }
   .masthead nav { gap: .36rem; }
   .results .shell { width: calc(100% - 1rem); }
   .benchmark-table { font-size: .8rem; }
