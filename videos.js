@@ -178,27 +178,112 @@ function keepInSync(members, signal) {
   tick();
 }
 
-function setupGallery() {
-  const featured = [...document.querySelectorAll('.featured-case')];
-  for (const card of featured) {
-    const video = card.querySelector('video');
-    video.tabIndex = 0;
-    followViewport(video, (active, visible) => {
-      if (active) {
-        if (video.error) video.load();
-        video.play().catch(() => {});
-      } else {
-        video.pause();
-        // A board leaving the viewport can release its decoder for the next row.
-        if (!visible) video.load();
-      }
-    }, () => video.paused, .15);
+function setupFeaturedComparisons(cards, more) {
+  const groups = cards.map(card => ({
+    grid: card.querySelector('.featured-clips'),
+    button: card.querySelector('.group-toggle'),
+    videos: [...card.querySelectorAll('video')],
+    visible: 0,
+    pausedByUser: false
+  }));
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let current;
+  let playback;
+  let playing = false;
+
+  function stop(release) {
+    if (!current) return;
+    playback?.abort();
+    playback = undefined;
+    playing = false;
+    current.button.textContent = 'Play';
+    for (const video of current.videos) {
+      video.pause();
+      if (release) video.load(); // With preload="none", this releases the decoder.
+    }
+    if (release) current = undefined;
   }
 
+  function start(group, manual) {
+    if (current) stop(current !== group);
+    current = group;
+    group.pausedByUser = false;
+    const job = new AbortController();
+    playback = job;
+    if (manual) group.button.textContent = 'Loading…';
+    // Start inside the click handler so browsers requiring a gesture can play all six.
+    Promise.all(group.videos.map(video => {
+      video.controls = false;
+      video.muted = true;
+      if (video.error) video.load();
+      return video.play();
+    })).then(() => {
+      if (job.signal.aborted) return;
+      playing = true;
+      group.button.textContent = 'Pause';
+      keepInSync(group.videos, job.signal);
+    }).catch(() => {
+      if (job.signal.aborted) return;
+      stop(false);
+      if (manual) {
+        for (const video of group.videos) {
+          video.controls = true;
+          if (video.error) video.load();
+        }
+      }
+    });
+  }
+
+  function toggle(group) {
+    if (current === group && playing) {
+      group.pausedByUser = true;
+      stop(false);
+    } else {
+      start(group, true);
+    }
+  }
+
+  function update() {
+    if (document.hidden || (current && current.visible < .15)) stop(true);
+    if (current || document.hidden || motion.matches || more.open) return;
+    // Reserve the six decoders for a single comparison. Any other card can take over on a tap.
+    const next = groups.filter(group => group.visible >= .35 && !group.pausedByUser)
+      .sort((a, b) => b.visible - a.visible)[0];
+    if (next) start(next, false);
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      groups.find(group => group.grid === entry.target).visible = entry.intersectionRatio;
+    }
+    update();
+  }, {threshold: [0, .15, .35, .6, 1]});
+  for (const group of groups) {
+    group.button.addEventListener('click', () => toggle(group));
+    for (const video of group.videos) {
+      video.controls = false;
+      video.addEventListener('click', () => {
+        if (!video.controls) toggle(group);
+      });
+    }
+    group.button.hidden = false;
+    observer.observe(group.grid);
+  }
+  document.addEventListener('visibilitychange', update);
+  motion.addEventListener('change', () => { stop(true); update(); });
+  more.addEventListener('toggle', () => {
+    if (more.open) stop(true);
+    else update();
+  });
+}
+
+function setupGallery() {
+  const featured = [...document.querySelectorAll('.featured-case')];
+  const more = document.querySelector('#more-examples');
+  setupFeaturedComparisons(featured, more);
   const featuredIds = new Set(featured.map(card => card.dataset.case));
   const cases = JSON.parse(document.querySelector('#comparison-data').textContent)
     .filter(item => !featuredIds.has(item.id));
-  const more = document.querySelector('#more-examples');
   const model = document.querySelector('#model-select');
   const example = document.querySelector('#example-select');
   const grid = document.querySelector('#clip-grid');

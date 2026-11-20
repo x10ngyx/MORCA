@@ -13,8 +13,8 @@
   <meta property="og:image" content="https://x10ngyx.github.io/MORCA/assets/cover.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23141e2d'/%3E%3Cpath d='M9 34V14l15 15 15-15v20' stroke='%239ed9d4' stroke-width='5' fill='none'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=20261121-featured">
-  <script defer src="videos.js?v=20261121-featured"></script>
+  <link rel="stylesheet" href="style.css?v=20261121-standard-clips">
+  <script defer src="videos.js?v=20261121-standard-clips"></script>
 </head>
 <body>
   <a class="skip-link" href="#project-video">Skip to the project video</a>
@@ -98,91 +98,236 @@
         <p class="sr-only" id="comparison-instructions">Tap a video or press Space to pause or resume the comparison.</p>
         <div class="featured-examples">
           <figure class="featured-case" data-case="cow-and-elephant">
-            <div class="comparison-board">
-              <video muted loop playsinline preload="none" width="1428" height="676" src="assets/featured/cow-and-elephant.mp4"
-                     poster="assets/featured/cow-and-elephant.webp" aria-labelledby="prompt-cow-and-elephant" aria-describedby="comparison-instructions"></video>
-              <ul class="method-labels" aria-label="Full-resolution clips">
-                <li><a href="assets/clips/cow-and-elephant/original.mp4" aria-label="Original, Cow and elephant, full-resolution clip">Original</a></li>
-                <li class="ours"><a href="assets/clips/cow-and-elephant/morca.mp4" aria-label="MORCA, Cow and elephant, full-resolution clip">MORCA</a></li>
-                <li><a href="assets/clips/cow-and-elephant/seacache.mp4" aria-label="SeaCache, Cow and elephant, full-resolution clip">SeaCache</a></li>
-                <li><a href="assets/clips/cow-and-elephant/teacache.mp4" aria-label="TeaCache, Cow and elephant, full-resolution clip">TeaCache</a></li>
-                <li><a href="assets/clips/cow-and-elephant/magcache.mp4" aria-label="MagCache, Cow and elephant, full-resolution clip">MagCache</a></li>
-                <li><a href="assets/clips/cow-and-elephant/dicache.mp4" aria-label="DiCache, Cow and elephant, full-resolution clip">DiCache</a></li>
-              </ul>
+            <div class="featured-clips" id="clips-cow-and-elephant" role="group" aria-labelledby="prompt-cow-and-elephant">
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/cow-and-elephant/original.mp4" poster="assets/clips/cow-and-elephant/original.webp" aria-label="Original, Cow and elephant"></video>
+                <figcaption><a href="assets/clips/cow-and-elephant/original.mp4" aria-label="Original, Cow and elephant, full-resolution clip">Original</a></figcaption>
+              </figure>
+              <figure class="clip ours">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/cow-and-elephant/morca.mp4" poster="assets/clips/cow-and-elephant/morca.webp" aria-label="MORCA, Cow and elephant"></video>
+                <figcaption><a href="assets/clips/cow-and-elephant/morca.mp4" aria-label="MORCA, Cow and elephant, full-resolution clip">MORCA</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/cow-and-elephant/seacache.mp4" poster="assets/clips/cow-and-elephant/seacache.webp" aria-label="SeaCache, Cow and elephant"></video>
+                <figcaption><a href="assets/clips/cow-and-elephant/seacache.mp4" aria-label="SeaCache, Cow and elephant, full-resolution clip">SeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/cow-and-elephant/teacache.mp4" poster="assets/clips/cow-and-elephant/teacache.webp" aria-label="TeaCache, Cow and elephant"></video>
+                <figcaption><a href="assets/clips/cow-and-elephant/teacache.mp4" aria-label="TeaCache, Cow and elephant, full-resolution clip">TeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/cow-and-elephant/magcache.mp4" poster="assets/clips/cow-and-elephant/magcache.webp" aria-label="MagCache, Cow and elephant"></video>
+                <figcaption><a href="assets/clips/cow-and-elephant/magcache.mp4" aria-label="MagCache, Cow and elephant, full-resolution clip">MagCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/cow-and-elephant/dicache.mp4" poster="assets/clips/cow-and-elephant/dicache.webp" aria-label="DiCache, Cow and elephant"></video>
+                <figcaption><a href="assets/clips/cow-and-elephant/dicache.mp4" aria-label="DiCache, Cow and elephant, full-resolution clip">DiCache</a></figcaption>
+              </figure>
             </div>
-            <figcaption class="prompt" id="prompt-cow-and-elephant">“a cow and an elephant”</figcaption>
+            <figcaption class="featured-caption">
+              <span class="prompt" id="prompt-cow-and-elephant">“a cow and an elephant”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-cow-and-elephant" aria-describedby="prompt-cow-and-elephant" hidden>Play</button>
+            </figcaption>
           </figure>
           <figure class="featured-case" data-case="dog-grooming">
-            <div class="comparison-board">
-              <video muted loop playsinline preload="none" width="1428" height="676" src="assets/featured/dog-grooming.mp4"
-                     poster="assets/featured/dog-grooming.webp" aria-labelledby="prompt-dog-grooming" aria-describedby="comparison-instructions"></video>
-              <ul class="method-labels" aria-label="Full-resolution clips">
-                <li><a href="assets/clips/dog-grooming/original.mp4" aria-label="Original, Dog grooming, full-resolution clip">Original</a></li>
-                <li class="ours"><a href="assets/clips/dog-grooming/morca.mp4" aria-label="MORCA, Dog grooming, full-resolution clip">MORCA</a></li>
-                <li><a href="assets/clips/dog-grooming/seacache.mp4" aria-label="SeaCache, Dog grooming, full-resolution clip">SeaCache</a></li>
-                <li><a href="assets/clips/dog-grooming/teacache.mp4" aria-label="TeaCache, Dog grooming, full-resolution clip">TeaCache</a></li>
-                <li><a href="assets/clips/dog-grooming/magcache.mp4" aria-label="MagCache, Dog grooming, full-resolution clip">MagCache</a></li>
-                <li><a href="assets/clips/dog-grooming/dicache.mp4" aria-label="DiCache, Dog grooming, full-resolution clip">DiCache</a></li>
-              </ul>
+            <div class="featured-clips" id="clips-dog-grooming" role="group" aria-labelledby="prompt-dog-grooming">
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/dog-grooming/original.mp4" poster="assets/clips/dog-grooming/original.webp" aria-label="Original, Dog grooming"></video>
+                <figcaption><a href="assets/clips/dog-grooming/original.mp4" aria-label="Original, Dog grooming, full-resolution clip">Original</a></figcaption>
+              </figure>
+              <figure class="clip ours">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/dog-grooming/morca.mp4" poster="assets/clips/dog-grooming/morca.webp" aria-label="MORCA, Dog grooming"></video>
+                <figcaption><a href="assets/clips/dog-grooming/morca.mp4" aria-label="MORCA, Dog grooming, full-resolution clip">MORCA</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/dog-grooming/seacache.mp4" poster="assets/clips/dog-grooming/seacache.webp" aria-label="SeaCache, Dog grooming"></video>
+                <figcaption><a href="assets/clips/dog-grooming/seacache.mp4" aria-label="SeaCache, Dog grooming, full-resolution clip">SeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/dog-grooming/teacache.mp4" poster="assets/clips/dog-grooming/teacache.webp" aria-label="TeaCache, Dog grooming"></video>
+                <figcaption><a href="assets/clips/dog-grooming/teacache.mp4" aria-label="TeaCache, Dog grooming, full-resolution clip">TeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/dog-grooming/magcache.mp4" poster="assets/clips/dog-grooming/magcache.webp" aria-label="MagCache, Dog grooming"></video>
+                <figcaption><a href="assets/clips/dog-grooming/magcache.mp4" aria-label="MagCache, Dog grooming, full-resolution clip">MagCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/dog-grooming/dicache.mp4" poster="assets/clips/dog-grooming/dicache.webp" aria-label="DiCache, Dog grooming"></video>
+                <figcaption><a href="assets/clips/dog-grooming/dicache.mp4" aria-label="DiCache, Dog grooming, full-resolution clip">DiCache</a></figcaption>
+              </figure>
             </div>
-            <figcaption class="prompt" id="prompt-dog-grooming">“A person is grooming dog”</figcaption>
+            <figcaption class="featured-caption">
+              <span class="prompt" id="prompt-dog-grooming">“A person is grooming dog”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-dog-grooming" aria-describedby="prompt-dog-grooming" hidden>Play</button>
+            </figcaption>
           </figure>
           <figure class="featured-case" data-case="coffee-cup">
-            <div class="comparison-board">
-              <video muted loop playsinline preload="none" width="1428" height="780" src="assets/featured/coffee-cup.mp4"
-                     poster="assets/featured/coffee-cup.webp" aria-labelledby="prompt-coffee-cup" aria-describedby="comparison-instructions"></video>
-              <ul class="method-labels" aria-label="Full-resolution clips">
-                <li><a href="assets/clips/coffee-cup/original.mp4" aria-label="Original, Coffee cup, full-resolution clip">Original</a></li>
-                <li class="ours"><a href="assets/clips/coffee-cup/morca.mp4" aria-label="MORCA, Coffee cup, full-resolution clip">MORCA</a></li>
-                <li><a href="assets/clips/coffee-cup/seacache.mp4" aria-label="SeaCache, Coffee cup, full-resolution clip">SeaCache</a></li>
-                <li><a href="assets/clips/coffee-cup/teacache.mp4" aria-label="TeaCache, Coffee cup, full-resolution clip">TeaCache</a></li>
-                <li><a href="assets/clips/coffee-cup/magcache.mp4" aria-label="MagCache, Coffee cup, full-resolution clip">MagCache</a></li>
-                <li><a href="assets/clips/coffee-cup/dicache.mp4" aria-label="DiCache, Coffee cup, full-resolution clip">DiCache</a></li>
-              </ul>
+            <div class="featured-clips" id="clips-coffee-cup" role="group" aria-labelledby="prompt-coffee-cup">
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/coffee-cup/original.mp4" poster="assets/clips/coffee-cup/original.webp" aria-label="Original, Coffee cup"></video>
+                <figcaption><a href="assets/clips/coffee-cup/original.mp4" aria-label="Original, Coffee cup, full-resolution clip">Original</a></figcaption>
+              </figure>
+              <figure class="clip ours">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/coffee-cup/morca.mp4" poster="assets/clips/coffee-cup/morca.webp" aria-label="MORCA, Coffee cup"></video>
+                <figcaption><a href="assets/clips/coffee-cup/morca.mp4" aria-label="MORCA, Coffee cup, full-resolution clip">MORCA</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/coffee-cup/seacache.mp4" poster="assets/clips/coffee-cup/seacache.webp" aria-label="SeaCache, Coffee cup"></video>
+                <figcaption><a href="assets/clips/coffee-cup/seacache.mp4" aria-label="SeaCache, Coffee cup, full-resolution clip">SeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/coffee-cup/teacache.mp4" poster="assets/clips/coffee-cup/teacache.webp" aria-label="TeaCache, Coffee cup"></video>
+                <figcaption><a href="assets/clips/coffee-cup/teacache.mp4" aria-label="TeaCache, Coffee cup, full-resolution clip">TeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/coffee-cup/magcache.mp4" poster="assets/clips/coffee-cup/magcache.webp" aria-label="MagCache, Coffee cup"></video>
+                <figcaption><a href="assets/clips/coffee-cup/magcache.mp4" aria-label="MagCache, Coffee cup, full-resolution clip">MagCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/coffee-cup/dicache.mp4" poster="assets/clips/coffee-cup/dicache.webp" aria-label="DiCache, Coffee cup"></video>
+                <figcaption><a href="assets/clips/coffee-cup/dicache.mp4" aria-label="DiCache, Coffee cup, full-resolution clip">DiCache</a></figcaption>
+              </figure>
             </div>
-            <figcaption class="prompt" id="prompt-coffee-cup">“a cup”</figcaption>
+            <figcaption class="featured-caption">
+              <span class="prompt" id="prompt-coffee-cup">“a cup”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-coffee-cup" aria-describedby="prompt-coffee-cup" hidden>Play</button>
+            </figcaption>
           </figure>
-          <figure class="featured-case" data-case="astronaut-in-slow-motion">
-            <div class="comparison-board">
-              <video muted loop playsinline preload="none" width="1428" height="780" src="assets/featured/astronaut-in-slow-motion.mp4"
-                     poster="assets/featured/astronaut-in-slow-motion.webp" aria-labelledby="prompt-astronaut-in-slow-motion" aria-describedby="comparison-instructions"></video>
-              <ul class="method-labels" aria-label="Full-resolution clips">
-                <li><a href="assets/clips/astronaut-in-slow-motion/original.mp4" aria-label="Original, Astronaut in slow motion, full-resolution clip">Original</a></li>
-                <li><a href="assets/clips/astronaut-in-slow-motion/seacache.mp4" aria-label="SeaCache, Astronaut in slow motion, full-resolution clip">SeaCache</a></li>
-                <li><a href="assets/clips/astronaut-in-slow-motion/fixed.mp4" aria-label="A: Fixed, Astronaut in slow motion, full-resolution clip">A: Fixed</a></li>
-                <li><a href="assets/clips/astronaut-in-slow-motion/step-error.mp4" aria-label="B: +Step error, Astronaut in slow motion, full-resolution clip">B: +Step error</a></li>
-                <li class="ours"><a href="assets/clips/astronaut-in-slow-motion/morca.mp4" aria-label="C: MORCA, Astronaut in slow motion, full-resolution clip">C: MORCA</a></li>
-              </ul>
+          <figure class="featured-case" data-case="corgi-at-sunset">
+            <div class="featured-clips" id="clips-corgi-at-sunset" role="group" aria-labelledby="prompt-corgi-at-sunset">
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/corgi-at-sunset/original.mp4" poster="assets/clips/corgi-at-sunset/original.webp" aria-label="Original, Corgi at sunset"></video>
+                <figcaption><a href="assets/clips/corgi-at-sunset/original.mp4" aria-label="Original, Corgi at sunset, full-resolution clip">Original</a></figcaption>
+              </figure>
+              <figure class="clip ours">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/corgi-at-sunset/morca.mp4" poster="assets/clips/corgi-at-sunset/morca.webp" aria-label="MORCA, Corgi at sunset"></video>
+                <figcaption><a href="assets/clips/corgi-at-sunset/morca.mp4" aria-label="MORCA, Corgi at sunset, full-resolution clip">MORCA</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/corgi-at-sunset/seacache.mp4" poster="assets/clips/corgi-at-sunset/seacache.webp" aria-label="SeaCache, Corgi at sunset"></video>
+                <figcaption><a href="assets/clips/corgi-at-sunset/seacache.mp4" aria-label="SeaCache, Corgi at sunset, full-resolution clip">SeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/corgi-at-sunset/teacache.mp4" poster="assets/clips/corgi-at-sunset/teacache.webp" aria-label="TeaCache, Corgi at sunset"></video>
+                <figcaption><a href="assets/clips/corgi-at-sunset/teacache.mp4" aria-label="TeaCache, Corgi at sunset, full-resolution clip">TeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/corgi-at-sunset/magcache.mp4" poster="assets/clips/corgi-at-sunset/magcache.webp" aria-label="MagCache, Corgi at sunset"></video>
+                <figcaption><a href="assets/clips/corgi-at-sunset/magcache.mp4" aria-label="MagCache, Corgi at sunset, full-resolution clip">MagCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/corgi-at-sunset/dicache.mp4" poster="assets/clips/corgi-at-sunset/dicache.webp" aria-label="DiCache, Corgi at sunset"></video>
+                <figcaption><a href="assets/clips/corgi-at-sunset/dicache.mp4" aria-label="DiCache, Corgi at sunset, full-resolution clip">DiCache</a></figcaption>
+              </figure>
             </div>
-            <figcaption class="prompt" id="prompt-astronaut-in-slow-motion">“An astronaut flying in space, in super slow motion”</figcaption>
+            <figcaption class="featured-caption">
+              <span class="prompt" id="prompt-corgi-at-sunset">“A cute happy Corgi playing in park, sunset, in super slow motion”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-corgi-at-sunset" aria-describedby="prompt-corgi-at-sunset" hidden>Play</button>
+            </figcaption>
           </figure>
-          <figure class="featured-case" data-case="motorcycle">
-            <div class="comparison-board">
-              <video muted loop playsinline preload="none" width="1428" height="338" src="assets/featured/motorcycle.mp4"
-                     poster="assets/featured/motorcycle.webp" aria-labelledby="prompt-motorcycle" aria-describedby="comparison-instructions"></video>
-              <ul class="method-labels" aria-label="Full-resolution clips">
-                <li><a href="assets/clips/motorcycle/original.mp4" aria-label="Original, Motorcycle coming to a stop, full-resolution clip">Original</a></li>
-                <li class="ours"><a href="assets/clips/motorcycle/morca.mp4" aria-label="MORCA, Motorcycle coming to a stop, full-resolution clip">MORCA</a></li>
-                <li><a href="assets/clips/motorcycle/seacache.mp4" aria-label="SeaCache, Motorcycle coming to a stop, full-resolution clip">SeaCache</a></li>
-              </ul>
+          <figure class="featured-case" data-case="guitar">
+            <div class="featured-clips" id="clips-guitar" role="group" aria-labelledby="prompt-guitar">
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/guitar/original.mp4" poster="assets/clips/guitar/original.webp" aria-label="Original, Strumming a guitar"></video>
+                <figcaption><a href="assets/clips/guitar/original.mp4" aria-label="Original, Strumming a guitar, full-resolution clip">Original</a></figcaption>
+              </figure>
+              <figure class="clip ours">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/guitar/morca.mp4" poster="assets/clips/guitar/morca.webp" aria-label="MORCA, Strumming a guitar"></video>
+                <figcaption><a href="assets/clips/guitar/morca.mp4" aria-label="MORCA, Strumming a guitar, full-resolution clip">MORCA</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/guitar/seacache.mp4" poster="assets/clips/guitar/seacache.webp" aria-label="SeaCache, Strumming a guitar"></video>
+                <figcaption><a href="assets/clips/guitar/seacache.mp4" aria-label="SeaCache, Strumming a guitar, full-resolution clip">SeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/guitar/teacache.mp4" poster="assets/clips/guitar/teacache.webp" aria-label="TeaCache, Strumming a guitar"></video>
+                <figcaption><a href="assets/clips/guitar/teacache.mp4" aria-label="TeaCache, Strumming a guitar, full-resolution clip">TeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/guitar/magcache.mp4" poster="assets/clips/guitar/magcache.webp" aria-label="MagCache, Strumming a guitar"></video>
+                <figcaption><a href="assets/clips/guitar/magcache.mp4" aria-label="MagCache, Strumming a guitar, full-resolution clip">MagCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="832" height="480"
+                       src="assets/clips/guitar/dicache.mp4" poster="assets/clips/guitar/dicache.webp" aria-label="DiCache, Strumming a guitar"></video>
+                <figcaption><a href="assets/clips/guitar/dicache.mp4" aria-label="DiCache, Strumming a guitar, full-resolution clip">DiCache</a></figcaption>
+              </figure>
             </div>
-            <figcaption class="prompt" id="prompt-motorcycle">“a motorcycle slowing down to stop”</figcaption>
+            <figcaption class="featured-caption">
+              <span class="prompt" id="prompt-guitar">“A person is strumming guitar”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-guitar" aria-describedby="prompt-guitar" hidden>Play</button>
+            </figcaption>
           </figure>
-          <figure class="featured-case" data-case="hair-drier">
-            <div class="comparison-board">
-              <video muted loop playsinline preload="none" width="1428" height="338" src="assets/featured/hair-drier.mp4"
-                     poster="assets/featured/hair-drier.webp" aria-labelledby="prompt-hair-drier" aria-describedby="comparison-instructions"></video>
-              <ul class="method-labels" aria-label="Full-resolution clips">
-                <li><a href="assets/clips/hair-drier/original.mp4" aria-label="Original, Hair drier and toothbrush, full-resolution clip">Original</a></li>
-                <li class="ours"><a href="assets/clips/hair-drier/morca.mp4" aria-label="MORCA, Hair drier and toothbrush, full-resolution clip">MORCA</a></li>
-                <li><a href="assets/clips/hair-drier/seacache.mp4" aria-label="SeaCache, Hair drier and toothbrush, full-resolution clip">SeaCache</a></li>
-              </ul>
+          <figure class="featured-case" data-case="raccoon-on-stage">
+            <div class="featured-clips" id="clips-raccoon-on-stage" role="group" aria-labelledby="prompt-raccoon-on-stage">
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/raccoon-on-stage/original.mp4" poster="assets/clips/raccoon-on-stage/original.webp" aria-label="Original, Raccoon on stage"></video>
+                <figcaption><a href="assets/clips/raccoon-on-stage/original.mp4" aria-label="Original, Raccoon on stage, full-resolution clip">Original</a></figcaption>
+              </figure>
+              <figure class="clip ours">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/raccoon-on-stage/morca.mp4" poster="assets/clips/raccoon-on-stage/morca.webp" aria-label="MORCA, Raccoon on stage"></video>
+                <figcaption><a href="assets/clips/raccoon-on-stage/morca.mp4" aria-label="MORCA, Raccoon on stage, full-resolution clip">MORCA</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/raccoon-on-stage/seacache.mp4" poster="assets/clips/raccoon-on-stage/seacache.webp" aria-label="SeaCache, Raccoon on stage"></video>
+                <figcaption><a href="assets/clips/raccoon-on-stage/seacache.mp4" aria-label="SeaCache, Raccoon on stage, full-resolution clip">SeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/raccoon-on-stage/teacache.mp4" poster="assets/clips/raccoon-on-stage/teacache.webp" aria-label="TeaCache, Raccoon on stage"></video>
+                <figcaption><a href="assets/clips/raccoon-on-stage/teacache.mp4" aria-label="TeaCache, Raccoon on stage, full-resolution clip">TeaCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/raccoon-on-stage/magcache.mp4" poster="assets/clips/raccoon-on-stage/magcache.webp" aria-label="MagCache, Raccoon on stage"></video>
+                <figcaption><a href="assets/clips/raccoon-on-stage/magcache.mp4" aria-label="MagCache, Raccoon on stage, full-resolution clip">MagCache</a></figcaption>
+              </figure>
+              <figure class="clip">
+                <video controls muted loop playsinline preload="none" width="720" height="480"
+                       src="assets/clips/raccoon-on-stage/dicache.mp4" poster="assets/clips/raccoon-on-stage/dicache.webp" aria-label="DiCache, Raccoon on stage"></video>
+                <figcaption><a href="assets/clips/raccoon-on-stage/dicache.mp4" aria-label="DiCache, Raccoon on stage, full-resolution clip">DiCache</a></figcaption>
+              </figure>
             </div>
-            <figcaption class="prompt" id="prompt-hair-drier">“a hair drier on the right of a toothbrush, front view”</figcaption>
+            <figcaption class="featured-caption">
+              <span class="prompt" id="prompt-raccoon-on-stage">“A raccoon dressed in suit playing the trumpet, stage background”</span>
+              <button type="button" class="group-toggle" aria-controls="clips-raccoon-on-stage" aria-describedby="prompt-raccoon-on-stage" hidden>Play</button>
+            </figcaption>
           </figure>
         </div>
         <details class="more-examples" id="more-examples">
-          <summary>18 more examples</summary>
+          <summary>More examples</summary>
           <div class="gallery-panel" id="gallery-panel" hidden>
             <div class="gallery-tools">
               <label class="field"><span>Model</span><span class="select-wrap"><select id="model-select"></select></span></label>
@@ -200,16 +345,13 @@
                 <li><strong>Wan2.2 · Suitcase and vase · 1.8×</strong> <a href="assets/clips/suitcase-and-vase/original.mp4">Original</a> <a href="assets/clips/suitcase-and-vase/morca.mp4">MORCA</a> <a href="assets/clips/suitcase-and-vase/seacache.mp4">SeaCache</a> <a href="assets/clips/suitcase-and-vase/teacache.mp4">TeaCache</a> <a href="assets/clips/suitcase-and-vase/magcache.mp4">MagCache</a> <a href="assets/clips/suitcase-and-vase/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.2 · Orange chair · 2.4×</strong> <a href="assets/clips/orange-chair/original.mp4">Original</a> <a href="assets/clips/orange-chair/morca.mp4">MORCA</a> <a href="assets/clips/orange-chair/seacache.mp4">SeaCache</a> <a href="assets/clips/orange-chair/teacache.mp4">TeaCache</a> <a href="assets/clips/orange-chair/magcache.mp4">MagCache</a> <a href="assets/clips/orange-chair/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.2 · Bicycle and car · 2.4×</strong> <a href="assets/clips/bicycle-and-car/original.mp4">Original</a> <a href="assets/clips/bicycle-and-car/morca.mp4">MORCA</a> <a href="assets/clips/bicycle-and-car/seacache.mp4">SeaCache</a> <a href="assets/clips/bicycle-and-car/teacache.mp4">TeaCache</a> <a href="assets/clips/bicycle-and-car/magcache.mp4">MagCache</a> <a href="assets/clips/bicycle-and-car/dicache.mp4">DiCache</a></li>
-                <li><strong>Wan2.2 · Corgi at sunset · 3.0×</strong> <a href="assets/clips/corgi-at-sunset/original.mp4">Original</a> <a href="assets/clips/corgi-at-sunset/morca.mp4">MORCA</a> <a href="assets/clips/corgi-at-sunset/seacache.mp4">SeaCache</a> <a href="assets/clips/corgi-at-sunset/teacache.mp4">TeaCache</a> <a href="assets/clips/corgi-at-sunset/magcache.mp4">MagCache</a> <a href="assets/clips/corgi-at-sunset/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.2 · Banana and apple · 3.0×</strong> <a href="assets/clips/banana-and-apple/original.mp4">Original</a> <a href="assets/clips/banana-and-apple/morca.mp4">MORCA</a> <a href="assets/clips/banana-and-apple/seacache.mp4">SeaCache</a> <a href="assets/clips/banana-and-apple/teacache.mp4">TeaCache</a> <a href="assets/clips/banana-and-apple/magcache.mp4">MagCache</a> <a href="assets/clips/banana-and-apple/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Cyberpunk astronaut · 2.4×</strong> <a href="assets/clips/cyberpunk-astronaut/original.mp4">Original</a> <a href="assets/clips/cyberpunk-astronaut/morca.mp4">MORCA</a> <a href="assets/clips/cyberpunk-astronaut/seacache.mp4">SeaCache</a> <a href="assets/clips/cyberpunk-astronaut/teacache.mp4">TeaCache</a> <a href="assets/clips/cyberpunk-astronaut/magcache.mp4">MagCache</a> <a href="assets/clips/cyberpunk-astronaut/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Leg massage · 2.4×</strong> <a href="assets/clips/leg-massage/original.mp4">Original</a> <a href="assets/clips/leg-massage/morca.mp4">MORCA</a> <a href="assets/clips/leg-massage/seacache.mp4">SeaCache</a> <a href="assets/clips/leg-massage/teacache.mp4">TeaCache</a> <a href="assets/clips/leg-massage/magcache.mp4">MagCache</a> <a href="assets/clips/leg-massage/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Tennis racket and bottle · 3.0×</strong> <a href="assets/clips/tennis-racket/original.mp4">Original</a> <a href="assets/clips/tennis-racket/morca.mp4">MORCA</a> <a href="assets/clips/tennis-racket/seacache.mp4">SeaCache</a> <a href="assets/clips/tennis-racket/teacache.mp4">TeaCache</a> <a href="assets/clips/tennis-racket/magcache.mp4">MagCache</a> <a href="assets/clips/tennis-racket/dicache.mp4">DiCache</a></li>
-                <li><strong>Wan2.1 · Strumming a guitar · 3.0×</strong> <a href="assets/clips/guitar/original.mp4">Original</a> <a href="assets/clips/guitar/morca.mp4">MORCA</a> <a href="assets/clips/guitar/seacache.mp4">SeaCache</a> <a href="assets/clips/guitar/teacache.mp4">TeaCache</a> <a href="assets/clips/guitar/magcache.mp4">MagCache</a> <a href="assets/clips/guitar/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Keyboard · 4.0×</strong> <a href="assets/clips/keyboard/original.mp4">Original</a> <a href="assets/clips/keyboard/morca.mp4">MORCA</a> <a href="assets/clips/keyboard/seacache.mp4">SeaCache</a> <a href="assets/clips/keyboard/teacache.mp4">TeaCache</a> <a href="assets/clips/keyboard/magcache.mp4">MagCache</a> <a href="assets/clips/keyboard/dicache.mp4">DiCache</a></li>
                 <li><strong>Wan2.1 · Toaster and microwave · 4.0×</strong> <a href="assets/clips/toaster-and-microwave/original.mp4">Original</a> <a href="assets/clips/toaster-and-microwave/morca.mp4">MORCA</a> <a href="assets/clips/toaster-and-microwave/seacache.mp4">SeaCache</a> <a href="assets/clips/toaster-and-microwave/teacache.mp4">TeaCache</a> <a href="assets/clips/toaster-and-microwave/magcache.mp4">MagCache</a> <a href="assets/clips/toaster-and-microwave/dicache.mp4">DiCache</a></li>
                 <li><strong>CogVideoX · Petting an animal · 1.8×</strong> <a href="assets/clips/petting-an-animal/original.mp4">Original</a> <a href="assets/clips/petting-an-animal/morca.mp4">MORCA</a> <a href="assets/clips/petting-an-animal/seacache.mp4">SeaCache</a> <a href="assets/clips/petting-an-animal/teacache.mp4">TeaCache</a> <a href="assets/clips/petting-an-animal/magcache.mp4">MagCache</a> <a href="assets/clips/petting-an-animal/dicache.mp4">DiCache</a></li>
-                <li><strong>CogVideoX · Raccoon on stage · 1.8×</strong> <a href="assets/clips/raccoon-on-stage/original.mp4">Original</a> <a href="assets/clips/raccoon-on-stage/morca.mp4">MORCA</a> <a href="assets/clips/raccoon-on-stage/seacache.mp4">SeaCache</a> <a href="assets/clips/raccoon-on-stage/teacache.mp4">TeaCache</a> <a href="assets/clips/raccoon-on-stage/magcache.mp4">MagCache</a> <a href="assets/clips/raccoon-on-stage/dicache.mp4">DiCache</a></li>
                 <li><strong>CogVideoX · Yellow bird · 2.4×</strong> <a href="assets/clips/yellow-bird/original.mp4">Original</a> <a href="assets/clips/yellow-bird/morca.mp4">MORCA</a> <a href="assets/clips/yellow-bird/seacache.mp4">SeaCache</a> <a href="assets/clips/yellow-bird/teacache.mp4">TeaCache</a> <a href="assets/clips/yellow-bird/magcache.mp4">MagCache</a> <a href="assets/clips/yellow-bird/dicache.mp4">DiCache</a></li>
                 <li><strong>CogVideoX · Bedroom · 2.4×</strong> <a href="assets/clips/bedroom/original.mp4">Original</a> <a href="assets/clips/bedroom/morca.mp4">MORCA</a> <a href="assets/clips/bedroom/seacache.mp4">SeaCache</a> <a href="assets/clips/bedroom/teacache.mp4">TeaCache</a> <a href="assets/clips/bedroom/magcache.mp4">MagCache</a> <a href="assets/clips/bedroom/dicache.mp4">DiCache</a></li>
                 <li><strong>CogVideoX · Panda in a Paris café · 3.0×</strong> <a href="assets/clips/panda-in-paris/original.mp4">Original</a> <a href="assets/clips/panda-in-paris/morca.mp4">MORCA</a> <a href="assets/clips/panda-in-paris/seacache.mp4">SeaCache</a> <a href="assets/clips/panda-in-paris/teacache.mp4">TeaCache</a> <a href="assets/clips/panda-in-paris/magcache.mp4">MagCache</a> <a href="assets/clips/panda-in-paris/dicache.mp4">DiCache</a></li>
@@ -379,15 +521,6 @@
           </table>
         </div>
         <p class="table-key"><strong>Bold</strong> marks the best fidelity score at each target. <u>Underlining</u> marks the runner-up.</p>
-        <div class="split figure-note">
-          <figure class="paper-figure">
-            <a class="figure-link" href="assets/tradeoffs.webp?v=20261120" aria-label="Open full-size figure. PSNR, SSIM, and LPIPS versus measured speedup for MORCA and SeaCache on Wan2.2.">
-              <img src="assets/tradeoffs.webp?v=20261120" width="1000" height="1305" loading="lazy" decoding="async" alt="PSNR, SSIM, and LPIPS versus measured speedup for MORCA and SeaCache on Wan2.2.">
-            </a>
-            <figcaption>Wan2.2 speed–fidelity curves on a 50-prompt subset, across nine targets from 1.5× to 3.5×.</figcaption>
-          </figure>
-          <div class="prose"><h3>Between the benchmark targets</h3><p>MORCA improves all three fidelity metrics over SeaCache across the sampled speedups on Wan2.2. The separation is most pronounced in the middle of the range.</p></div>
-        </div>
       </div>
     </section>
   </main>
@@ -401,9 +534,6 @@
     [{"id":"cow-and-elephant","title":"Cow and elephant","model":"Wan2.2","target":"2.4×","prompt":"a cow and an elephant","figure":4,"sample":1,"clips":[{"method":"Original","path":"assets/clips/cow-and-elephant/original.mp4"},{"method":"MORCA","path":"assets/clips/cow-and-elephant/morca.mp4"},{"method":"SeaCache","path":"assets/clips/cow-and-elephant/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/cow-and-elephant/teacache.mp4"},{"method":"MagCache","path":"assets/clips/cow-and-elephant/magcache.mp4"},{"method":"DiCache","path":"assets/clips/cow-and-elephant/dicache.mp4"}],"width":832,"height":480},
      {"id":"dog-grooming","title":"Dog grooming","model":"Wan2.1","target":"2.4×","prompt":"A person is grooming dog","figure":4,"sample":2,"clips":[{"method":"Original","path":"assets/clips/dog-grooming/original.mp4"},{"method":"MORCA","path":"assets/clips/dog-grooming/morca.mp4"},{"method":"SeaCache","path":"assets/clips/dog-grooming/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/dog-grooming/teacache.mp4"},{"method":"MagCache","path":"assets/clips/dog-grooming/magcache.mp4"},{"method":"DiCache","path":"assets/clips/dog-grooming/dicache.mp4"}],"width":832,"height":480},
      {"id":"coffee-cup","title":"Coffee cup","model":"CogVideoX","target":"2.4×","prompt":"a cup","figure":4,"sample":3,"clips":[{"method":"Original","path":"assets/clips/coffee-cup/original.mp4"},{"method":"MORCA","path":"assets/clips/coffee-cup/morca.mp4"},{"method":"SeaCache","path":"assets/clips/coffee-cup/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/coffee-cup/teacache.mp4"},{"method":"MagCache","path":"assets/clips/coffee-cup/magcache.mp4"},{"method":"DiCache","path":"assets/clips/coffee-cup/dicache.mp4"}],"width":720,"height":480},
-     {"id":"astronaut-in-slow-motion","title":"Astronaut in slow motion","model":"CogVideoX","target":"2.4×","prompt":"An astronaut flying in space, in super slow motion","figure":5,"sample":1,"clips":[{"method":"Original","path":"assets/clips/astronaut-in-slow-motion/original.mp4"},{"method":"SeaCache","path":"assets/clips/astronaut-in-slow-motion/seacache.mp4"},{"method":"A: Fixed","path":"assets/clips/astronaut-in-slow-motion/fixed.mp4"},{"method":"B: +Step error","path":"assets/clips/astronaut-in-slow-motion/step-error.mp4"},{"method":"C: MORCA","path":"assets/clips/astronaut-in-slow-motion/morca.mp4"}],"width":720,"height":480},
-     {"id":"motorcycle","title":"Motorcycle coming to a stop","model":"Wan2.2","target":"1.8×","prompt":"a motorcycle slowing down to stop","figure":8,"sample":1,"clips":[{"method":"Original","path":"assets/clips/motorcycle/original.mp4"},{"method":"MORCA","path":"assets/clips/motorcycle/morca.mp4"},{"method":"SeaCache","path":"assets/clips/motorcycle/seacache.mp4"}],"width":832,"height":480},
-     {"id":"hair-drier","title":"Hair drier and toothbrush","model":"Wan2.2","target":"3.0×","prompt":"a hair drier on the right of a toothbrush, front view","figure":8,"sample":2,"clips":[{"method":"Original","path":"assets/clips/hair-drier/original.mp4"},{"method":"MORCA","path":"assets/clips/hair-drier/morca.mp4"},{"method":"SeaCache","path":"assets/clips/hair-drier/seacache.mp4"}],"width":832,"height":480},
      {"id":"still-life-pear","title":"Pear still life","model":"Wan2.2","target":"1.8×","prompt":"In a still frame, a pear","figure":10,"sample":1,"clips":[{"method":"Original","path":"assets/clips/still-life-pear/original.mp4"},{"method":"MORCA","path":"assets/clips/still-life-pear/morca.mp4"},{"method":"SeaCache","path":"assets/clips/still-life-pear/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/still-life-pear/teacache.mp4"},{"method":"MagCache","path":"assets/clips/still-life-pear/magcache.mp4"},{"method":"DiCache","path":"assets/clips/still-life-pear/dicache.mp4"}],"width":832,"height":480},
      {"id":"suitcase-and-vase","title":"Suitcase and vase","model":"Wan2.2","target":"1.8×","prompt":"a suitcase and a vase","figure":10,"sample":2,"clips":[{"method":"Original","path":"assets/clips/suitcase-and-vase/original.mp4"},{"method":"MORCA","path":"assets/clips/suitcase-and-vase/morca.mp4"},{"method":"SeaCache","path":"assets/clips/suitcase-and-vase/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/suitcase-and-vase/teacache.mp4"},{"method":"MagCache","path":"assets/clips/suitcase-and-vase/magcache.mp4"},{"method":"DiCache","path":"assets/clips/suitcase-and-vase/dicache.mp4"}],"width":832,"height":480},
      {"id":"orange-chair","title":"Orange chair","model":"Wan2.2","target":"2.4×","prompt":"an orange chair","figure":10,"sample":3,"clips":[{"method":"Original","path":"assets/clips/orange-chair/original.mp4"},{"method":"MORCA","path":"assets/clips/orange-chair/morca.mp4"},{"method":"SeaCache","path":"assets/clips/orange-chair/seacache.mp4"},{"method":"TeaCache","path":"assets/clips/orange-chair/teacache.mp4"},{"method":"MagCache","path":"assets/clips/orange-chair/magcache.mp4"},{"method":"DiCache","path":"assets/clips/orange-chair/dicache.mp4"}],"width":832,"height":480},
