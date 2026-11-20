@@ -13,7 +13,7 @@
   <meta property="og:image" content="https://x10ngyx.github.io/MORCA/assets/cover.webp">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='9' fill='%23141e2d'/%3E%3Cpath d='M9 34V14l15 15 15-15v20' stroke='%239ed9d4' stroke-width='5' fill='none'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fonts/mulish-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=20261120-nav">
+  <link rel="stylesheet" href="style.css?v=20261121-sections">
   <script defer src="videos.js?v=20261120-cover"></script>
 </head>
 <body>
@@ -21,6 +21,7 @@
   <header class="cover" id="top">
     <div class="shell masthead">
       <nav aria-label="Project navigation">
+        <a href="#project-video">Project video</a>
         <a href="#videos">Generation results</a>
         <a href="#method">Method</a>
         <a href="#results">Results</a>
@@ -64,7 +65,7 @@
     <section id="project-video" class="section paper film-section" aria-labelledby="film-title">
       <div class="shell">
         <div class="section-heading">
-          <h2 id="film-title">Project <em>video.</em></h2>
+          <h2 id="film-title">Project <em>video</em></h2>
         </div>
         <div class="film-player">
           <video id="project-film" aria-labelledby="film-title" aria-describedby="film-instructions" tabindex="0"
@@ -89,7 +90,7 @@
         </noscript>
       </div>
     </section>
-    <section id="videos" class="section dark" aria-labelledby="generation-title">
+    <section id="videos" class="section paper" aria-labelledby="generation-title">
       <div class="shell">
         <div class="section-heading">
           <h2 id="generation-title">Generation <em>results</em></h2>
@@ -192,7 +193,7 @@
     <section id="method" class="section paper">
       <div class="shell">
         <div class="section-heading">
-          <h2>Method <em>overview.</em></h2>
+          <h2>Method <em>overview</em></h2>
           <p>A target speedup determines how many denoising steps can reuse cached computation. MORCA learns where to use them.</p>
         </div>
         <figure class="paper-figure">
@@ -250,7 +251,7 @@
     <section id="results" class="section results">
       <div class="shell">
         <div class="section-heading">
-          <h2>Benchmark <em>results.</em></h2>
+          <h2>Benchmark <em>results</em></h2>
           <p>All three models use 50 denoising steps and 200 prompts. Speedup is relative to uncached runtime. Fidelity is measured against the uncached video.</p>
         </div>
         <div class="benchmark-grid">
