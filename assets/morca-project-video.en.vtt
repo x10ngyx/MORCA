@@ -1,0 +1,35 @@
+WEBVTT
+
+00:00:00.320 --> 00:00:05.333
+MORCA learns which denoising steps can reuse cached
+computation in video diffusion.
+
+00:00:06.320 --> 00:00:08.560
+A target speedup sets the reuse budget.
+
+00:00:08.690 --> 00:00:15.837
+In this example, latent features and step-error
+signals guide 32 reuses across 50 denoising steps.
+
+00:00:16.820 --> 00:00:20.511
+Offline implicit Q-learning starts from random cache
+schedules.
+
+00:00:20.641 --> 00:00:27.638
+Online fine-tuning adds fresh rollouts. The reward
+is the final video’s fidelity to its uncached
+reference.
+
+00:00:28.612 --> 00:00:33.753
+Watch the cow’s coat. MORCA keeps the
+black-and-white markings in the uncached reference.
+
+00:00:34.737 --> 00:00:37.809
+On CogVideoX, compare the curve of the cup handle.
+
+00:00:39.737 --> 00:00:46.009
+Across 200 VBench prompts, MORCA improves PSNR over
+SeaCache on all three models.
+
+00:00:46.139 --> 00:00:50.384
+The largest gain is 2.82 decibels on CogVideoX.

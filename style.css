@@ -233,6 +233,10 @@ h2 em { font-family: var(--serif); font-weight: 400; letter-spacing: -.05em; col
 .dark h2 em { color: var(--gold); }
 .section-heading > p { max-width: 25rem; font-size: 1.03rem; line-height: 1.6; color: var(--muted); }
 .dark .section-heading > p { color: #c6d1cb; }
+.film-section .section-heading { margin-bottom: clamp(1.4rem, 2.5vw, 2.5rem); }
+.film-links { display: flex; align-items: baseline; flex-wrap: wrap; gap: .5rem 1.5rem; color: var(--muted); }
+.film-links a { color: var(--green); font-weight: 750; text-underline-offset: .2em; }
+#project-film { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: .45rem; background: var(--night); }
 h3 {
   font-size: clamp(1.35rem, 2.1vw, 2rem);
   font-weight: 800;

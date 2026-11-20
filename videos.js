@@ -114,6 +114,7 @@ function setupGallery() {
   const model = document.querySelector('#model-select');
   const example = document.querySelector('#example-select');
   const grid = document.querySelector('#clip-grid');
+  const film = document.querySelector('#project-film');
   const status = document.querySelector('#play-status');
   const play = document.querySelector('#group-play');
   const replay = document.querySelector('#group-replay');
@@ -211,6 +212,12 @@ function setupGallery() {
     videos = Array.from(grid.querySelectorAll('video'));
   }
 
+  document.querySelector('#watch-film').addEventListener('click', event => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    film.play().catch(() => film.focus({ preventScroll: true }));
+  });
+  film.addEventListener('play', () => stop());
+  grid.addEventListener('play', () => film.pause(), true);
   play.addEventListener('click', () => phase === 'idle' ? start(false) : stop('Paused'));
   replay.addEventListener('click', () => start(true));
   grid.addEventListener('pause', event => {
