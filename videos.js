@@ -74,12 +74,15 @@ function waitForMedia(video, event, signal) {
   });
 }
 
-async function prepareVideo(video, time, signal) {
-  if (video.error || video.readyState < HTMLMediaElement.HAVE_FUTURE_DATA) {
-    const ready = waitForMedia(video, 'canplay', signal);
-    video.load();
-    await ready;
-  }
+async function prepareVideo(video, signal) {
+  if (video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA && !video.error) return;
+  const ready = waitForMedia(video, 'canplaythrough', signal);
+  video.preload = 'auto';
+  if (video.error || video.networkState !== HTMLMediaElement.NETWORK_LOADING) video.load();
+  await ready;
+}
+
+async function alignVideo(video, time, signal) {
   signal.throwIfAborted();
   const target = Math.min(time, Math.max(0, video.duration - .02));
   if (Math.abs(video.currentTime - target) > .015 || video.seeking) {
@@ -87,6 +90,23 @@ async function prepareVideo(video, time, signal) {
     video.currentTime = target;
     await seeked;
   }
+}
+
+function keepInSync(members, signal) {
+  const [reference, ...others] = members;
+  function tick() {
+    if (signal.aborted) return;
+    if (!reference.seeking && !reference.ended) {
+      const time = reference.currentTime;
+      for (const video of others) {
+        if (!video.paused && !video.seeking && Math.abs(video.currentTime - time) > .075) {
+          video.currentTime = Math.min(time, video.duration);
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
 }
 
 function setupGallery() {
@@ -127,10 +147,21 @@ function setupGallery() {
     const members = videos.slice();
     playbackState('loading', 'Loading the comparison…');
     try {
-      await Promise.all(members.map(video => prepareVideo(video, time, job.signal)));
+      // First playback initializes each decoder. Hold each clip as it becomes ready
+      // so a slow download or decoder cannot give its neighbors a head start.
+      await Promise.all(members.map(async video => {
+        await prepareVideo(video, job.signal);
+        job.signal.throwIfAborted();
+        await video.play();
+        if (!job.signal.aborted) video.pause();
+      }));
+      await Promise.all(members.map(video => alignVideo(video, time, job.signal)));
       job.signal.throwIfAborted();
       await Promise.all(members.map(video => video.play()));
-      if (!job.signal.aborted) playbackState('playing', 'Playing together');
+      if (!job.signal.aborted) {
+        keepInSync(members, job.signal);
+        playbackState('playing', 'Playing together');
+      }
     } catch {
       if (!job.signal.aborted) stop('A clip could not play. Retry or use its individual controls.');
     }
@@ -187,15 +218,6 @@ function setupGallery() {
   }, true);
   grid.addEventListener('ended', () => {
     if (phase === 'playing' && videos.every(video => video.ended)) stop('Finished');
-  }, true);
-  grid.addEventListener('timeupdate', event => {
-    const lead = videos[0];
-    if (phase !== 'playing' || event.target !== lead || lead.seeking) return;
-    for (const video of videos.slice(1)) {
-      if (!video.paused && !video.seeking && Math.abs(video.currentTime - lead.currentTime) > .12) {
-        video.currentTime = Math.min(lead.currentTime, video.duration);
-      }
-    }
   }, true);
   model.addEventListener('change', () => {
     fillExamples();
